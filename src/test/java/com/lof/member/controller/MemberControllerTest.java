@@ -1,111 +1,38 @@
 package com.lof.member.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import com.lof.member.domain.Member;
-import com.lof.member.service.MemberService;
-import com.lof.member.service.MemberValidator;
+import com.lof.member.fixture.MemberFixture;
+import com.lof.member.repository.MemberRepository;
 
-@WebMvcTest(MemberController.class)
+// TODO: WebMvcTest에서는 HTTP 요청을 request DTO로 변환하는 과정을 테스트하고
+//  여기서는 그 뒷단을 테스트하게 되면 RestAssured를 활용한 통합테스트가 필요없는게 아닐까?
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class MemberControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MemberController memberController;
 
-    @MockitoBean
-    private MemberService memberService;
-    @MockitoBean
-    private MemberValidator memberValidator;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("회원 가입을 위한 검증에 통과하면, 회원가입에 성공한다.")
-    void signUp() throws Exception {
+    void signUp() {
         // given
-        String signUpRequest = """
-            {
-                "loginId": "abc123",
-                "password": "1234"
-            }
-            """;
-        doNothing().when(memberValidator).validate(any(Member.class));
-        doNothing().when(memberService).signUp(any(Member.class));
+        SignUpRequest signUpRequest = MemberFixture.createSignUpRequest(MemberFixture.VALID_LOGIN_ID, MemberFixture.VALID_PASSWORD);
+        int initialSize = memberRepository.findAll().size();
 
-        // when & then
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(signUpRequest))
-                .andExpect(status().isCreated());
-        verify(memberValidator, times(1)).validate(any(Member.class));
-    }
+        // when
+        memberController.signUp(signUpRequest);
 
-    @ParameterizedTest
-    @DisplayName("회원 아이디는 빈 문자열이나 공백으로만 구성되어 있을 수 없다.")
-    @ValueSource(strings = {
-            """
-            {
-                "loginId": "",
-                "password": "1234"
-            }
-            """,
-            """
-            {
-                "loginId": " ",
-                "password": "1234"
-            }
-            """,
-            """
-            {
-                "password": "1234"
-            }
-            """
-    })
-    void signUpFailByLoginId(String signUpRequest) throws Exception {
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(signUpRequest))
-                .andExpect(status().isBadRequest());
-    }
-
-    @ParameterizedTest
-    @DisplayName("회원 비밀번호는 빈 문자열이나 공백으로만 구성되어 있을 수 없다.")
-    @ValueSource(strings = {
-            """
-            {
-                "loginId": "abc123",
-                "password": ""
-            }
-            """,
-            """
-            {
-                "loginId": "abc123",
-                "password": " "
-            }
-            """,
-            """
-            {
-                "loginId": "abc123"
-            }
-            """
-    })
-    void signUpFailByPassword(String signUpRequest) throws Exception {
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(signUpRequest))
-                .andExpect(status().isBadRequest());
+        // then
+        assertThat(memberRepository.findAll().size()).isEqualTo(initialSize + 1);
     }
 }
