@@ -16,7 +16,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void createMember(Member member) {
+    public void signUp(Member member) {
         try {
             memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {

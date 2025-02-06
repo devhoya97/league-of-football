@@ -1,5 +1,9 @@
 package com.lof.member.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,7 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.lof.member.domain.Member;
 import com.lof.member.service.MemberService;
+import com.lof.member.service.MemberValidator;
 
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {
@@ -23,9 +29,11 @@ class MemberControllerTest {
 
     @MockitoBean
     private MemberService memberService;
+    @MockitoBean
+    private MemberValidator memberValidator;
 
     @Test
-    @DisplayName("회원 가입에 성공하면 201 상태코드를 반환한다.")
+    @DisplayName("회원 가입을 위한 검증에 통과하면, 회원가입에 성공한다.")
     void signUp() throws Exception {
         // given
         String signUpRequest = """
@@ -34,12 +42,15 @@ class MemberControllerTest {
                 "password": "1234"
             }
             """;
+        doNothing().when(memberValidator).validate(any(Member.class));
+        doNothing().when(memberService).signUp(any(Member.class));
 
         // when & then
         mockMvc.perform(post("/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(signUpRequest))
                 .andExpect(status().isCreated());
+        verify(memberValidator, times(1)).validate(any(Member.class));
     }
 
     @ParameterizedTest

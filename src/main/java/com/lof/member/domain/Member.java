@@ -29,7 +29,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Builder
     public Member(String loginId, String password) {
         this.loginId = loginId;
         this.password = password;

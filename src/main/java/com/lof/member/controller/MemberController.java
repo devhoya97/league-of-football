@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lof.member.domain.Member;
 import com.lof.member.service.MemberService;
+import com.lof.member.service.MemberValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,15 +19,14 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberValidator memberValidator;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public void signUp(@Valid @RequestBody SignUpRequest request) {
-        Member member = Member.builder()
-                .loginId(request.loginId())
-                .password(request.password())
-                .build();
+        Member member = new Member(request.loginId(), request.password());
+        memberValidator.validate(member);
 
-        memberService.createMember(member);
+        memberService.signUp(member);
     }
 }
