@@ -9,10 +9,10 @@ import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Component
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberValidator {
 
     private static final Pattern LOGIN_ID_PATTERN = Pattern.compile("^(?=.*[a-zA-Z])[a-zA-Z0-9]{5,20}$");
