@@ -33,8 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleForbiddenException(ForbiddenException e) {
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthException(AuthException e) {
         log.error("code: {}, message: {}", e.getCode().toString(), e.getMessage(), e);
         return new ErrorResponse(e.getCode().toString(), e.getMessage());
     }

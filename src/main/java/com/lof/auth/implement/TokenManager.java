@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.lof.auth.domain.LoginToken;
-import com.lof.global.exception.BadRequestException;
+import com.lof.global.exception.AuthException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 
@@ -64,9 +64,9 @@ public class TokenManager {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (MalformedJwtException | SignatureException e) {
-            throw new BadRequestException(ErrorCode.INVALID_TOKEN);
+            throw new AuthException(ErrorCode.INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
-            throw new BadRequestException(ErrorCode.EXPIRED_TOKEN);
+            throw new AuthException(ErrorCode.EXPIRED_TOKEN);
         }
     }
 }

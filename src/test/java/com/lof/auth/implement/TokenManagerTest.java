@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lof.auth.domain.LoginToken;
+import com.lof.global.exception.AuthException;
 import com.lof.global.exception.BadRequestException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
@@ -69,8 +70,8 @@ class TokenManagerTest {
 
         // when & then
         assertThatThrownBy(() -> tokenManager.parseMemberId(token))
-                .isInstanceOf(BadRequestException.class)
-                .extracting(exception -> ((BadRequestException) exception).getCode())
+                .isInstanceOf(AuthException.class)
+                .extracting(exception -> ((AuthException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_TOKEN);
     }
 
@@ -85,8 +86,8 @@ class TokenManagerTest {
 
         // when & then
         assertThatThrownBy(() -> tokenManager.parseMemberId(token.accessToken()))
-                .isInstanceOf(BadRequestException.class)
-                .extracting(exception -> ((BadRequestException) exception).getCode())
+                .isInstanceOf(AuthException.class)
+                .extracting(exception -> ((AuthException) exception).getCode())
                 .isEqualTo(ErrorCode.EXPIRED_TOKEN);
     }
 }
