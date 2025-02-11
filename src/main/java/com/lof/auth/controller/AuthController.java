@@ -13,6 +13,8 @@ import com.lof.auth.controller.dto.LoginRequest;
 import com.lof.auth.controller.dto.LoginResponse;
 import com.lof.auth.domain.LoginToken;
 import com.lof.auth.service.AuthService;
+import com.lof.global.exception.AuthException;
+import com.lof.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +44,9 @@ public class AuthController {
     @GetMapping("/login-refresh")
     public LoginResponse loginRefresh(HttpServletRequest request) {
         String refreshToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (refreshToken == null) {
+            throw new AuthException(ErrorCode.MISSING_TOKEN);
+        }
         LoginToken token = authService.reissueLoginToken(refreshToken);
         return new LoginResponse(token);
     }

@@ -13,8 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lof.auth.domain.LoginToken;
+import com.lof.auth.repository.InvalidRefreshTokenRepository;
+import com.lof.auth.repository.ValidRefreshTokenRepository;
 import com.lof.global.exception.AuthException;
-import com.lof.global.exception.BadRequestException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 import com.lof.member.fixture.MemberFixture;
@@ -29,7 +30,19 @@ class TokenManagerTest {
     @Autowired
     private EntityManager em;
 
-    private final TokenManager tokenManager = new TokenManager("thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm", ACCESS_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION);
+    @Autowired
+    private ValidRefreshTokenRepository validRefreshTokenRepository;
+
+    @Autowired
+    private InvalidRefreshTokenRepository invalidRefreshTokenRepository;
+
+    private final TokenManager tokenManager = new TokenManager(
+            "thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm",
+            ACCESS_TOKEN_EXPIRATION,
+            REFRESH_TOKEN_EXPIRATION,
+            validRefreshTokenRepository,
+            invalidRefreshTokenRepository
+    );
 
     @Test
     @DisplayName("같은 회원의 토큰을 발급하더라도, 발급한 시간이 다르면 토큰의 값은 서로 다르다.")

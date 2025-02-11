@@ -18,6 +18,7 @@ public enum ErrorCode {
     INVALID_LOGIN("아이디 또는 비밀번호를 다시 확인해주세요."),
     INVALID_TOKEN("토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN("만료된 토큰입니다."),
+    MISSING_TOKEN("요청에 토큰을 포함해주세요."),
     ;
 
     private final String message;
