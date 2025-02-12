@@ -3,6 +3,7 @@ package com.lof.auth.domain;
 import jakarta.persistence.Id;
 
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,10 @@ public class InvalidRefreshToken {
 //    private String refreshToken;
     private long memberId;
 
-    public InvalidRefreshToken(ValidRefreshToken validRefreshToken) {
-        this(validRefreshToken.getRefreshToken(), validRefreshToken.getId());
+    @TimeToLive
+    private Long expirationInSeconds;
+
+    public InvalidRefreshToken(ValidRefreshToken validRefreshToken, Long expirationInSeconds) {
+        this(validRefreshToken.getRefreshToken(), validRefreshToken.getId(), expirationInSeconds);
     }
 }

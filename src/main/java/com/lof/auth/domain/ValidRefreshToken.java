@@ -3,6 +3,7 @@ package com.lof.auth.domain;
 import jakarta.persistence.Id;
 
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,4 +20,7 @@ public class ValidRefreshToken {
     private Long id; // 변수명을 memberId로 못 바꾸나?
 //    private Long memberId;
     private String refreshToken;
+
+    @TimeToLive
+    private Long expirationInSeconds;
 }

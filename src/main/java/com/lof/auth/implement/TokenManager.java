@@ -25,6 +25,8 @@ import io.jsonwebtoken.security.SignatureException;
 @Component
 public class TokenManager {
 
+    private static final int MILLIS_TO_SECONDS = 1000;
+
     private final String secret;
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
@@ -52,7 +54,7 @@ public class TokenManager {
         invalidatePreviousRefreshToken(member);
         String refreshToken = createToken(member, refreshTokenExpiration);
 
-        validRefreshTokenRepository.save(new ValidRefreshToken(member.getId(), refreshToken));
+        validRefreshTokenRepository.save(new ValidRefreshToken(member.getId(), refreshToken, refreshTokenExpiration / MILLIS_TO_SECONDS));
         String accessToken = createToken(member, accessTokenExpiration);
 
         return new LoginToken(accessToken, refreshToken);
@@ -62,7 +64,8 @@ public class TokenManager {
         validRefreshTokenRepository.findById(member.getId())
                 .ifPresent((validRefreshToken) -> {
                     validRefreshTokenRepository.deleteById(member.getId());
-                    invalidRefreshTokenRepository.save(new InvalidRefreshToken(validRefreshToken));
+                    long remainingExpirationMillis = parseExpirationMillis(validRefreshToken.getRefreshToken());
+                    invalidRefreshTokenRepository.save(new InvalidRefreshToken(validRefreshToken, remainingExpirationMillis / MILLIS_TO_SECONDS));
                 });
     }
 
@@ -86,6 +89,15 @@ public class TokenManager {
         Claims claims = parseClaims(token);
 
         return Long.parseLong(claims.getSubject());
+    }
+
+    private long parseExpirationMillis(String token) {
+        Claims claims = parseClaims(token);
+        Date expiration = claims.getExpiration();
+
+        long now = System.currentTimeMillis();
+
+        return expiration.getTime() - now;
     }
 
     private Claims parseClaims(String token) {
