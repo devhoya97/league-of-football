@@ -14,12 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RedisInitializer {
 
-    private final RedisTemplate<String, String> redisTemplate;
-    private final RedisTemplate<String, Long> redisLongTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @PostConstruct
     public void clearRedis() {
         redisTemplate.getConnectionFactory().getConnection().flushAll();
-        redisLongTemplate.getConnectionFactory().getConnection().flushAll();
     }
 }

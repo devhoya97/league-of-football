@@ -5,7 +5,9 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.lof.auth.domain.InvalidRefreshToken;
 import com.lof.auth.domain.LoginToken;
+import com.lof.auth.domain.ValidRefreshToken;
 import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
 import com.lof.global.exception.AuthException;
@@ -50,17 +52,17 @@ public class TokenManager {
         invalidatePreviousRefreshToken(member);
         String refreshToken = createToken(member, refreshTokenExpiration);
 
-        validRefreshTokenRepository.save(member, refreshToken);
+        validRefreshTokenRepository.save(new ValidRefreshToken(member.getId(), refreshToken));
         String accessToken = createToken(member, accessTokenExpiration);
 
         return new LoginToken(accessToken, refreshToken);
     }
 
     private void invalidatePreviousRefreshToken(Member member) {
-        validRefreshTokenRepository.findByMemberId(member.getId())
+        validRefreshTokenRepository.findById(member.getId())
                 .ifPresent((validRefreshToken) -> {
-                    validRefreshTokenRepository.deleteByMemberId(member.getId());
-                    invalidRefreshTokenRepository.save(member.getId(), validRefreshToken);
+                    validRefreshTokenRepository.deleteById(member.getId());
+                    invalidRefreshTokenRepository.save(new InvalidRefreshToken(validRefreshToken));
                 });
     }
 
@@ -74,8 +76,8 @@ public class TokenManager {
     }
 
     public void validateRefreshToken(String refreshToken) {
-        invalidRefreshTokenRepository.findByRefreshToken(refreshToken)
-                .ifPresent((memberId) -> {
+        invalidRefreshTokenRepository.findById(refreshToken)
+                .ifPresent((invalidRefreshToken) -> {
                     throw new AuthException(ErrorCode.INVALID_TOKEN);
                 });
     }
@@ -83,7 +85,7 @@ public class TokenManager {
     public long parseMemberId(String token) {
         Claims claims = parseClaims(token);
 
-        return Long.valueOf(claims.getSubject());
+        return Long.parseLong(claims.getSubject());
     }
 
     private Claims parseClaims(String token) {

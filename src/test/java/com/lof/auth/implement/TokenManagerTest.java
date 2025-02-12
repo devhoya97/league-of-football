@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import jakarta.persistence.EntityManager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,18 @@ class TokenManagerTest {
     @Autowired
     private InvalidRefreshTokenRepository invalidRefreshTokenRepository;
 
-    private final TokenManager tokenManager = new TokenManager(
-            "thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm",
-            ACCESS_TOKEN_EXPIRATION,
-            REFRESH_TOKEN_EXPIRATION,
-            validRefreshTokenRepository,
-            invalidRefreshTokenRepository
-    );
+    private TokenManager tokenManager;
+
+    @BeforeEach
+    void init() {
+        tokenManager = new TokenManager(
+                "thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm",
+                ACCESS_TOKEN_EXPIRATION,
+                REFRESH_TOKEN_EXPIRATION,
+                validRefreshTokenRepository,
+                invalidRefreshTokenRepository
+        );
+    }
 
     @Test
     @DisplayName("같은 회원의 토큰을 발급하더라도, 발급한 시간이 다르면 토큰의 값은 서로 다르다.")
