@@ -17,7 +17,7 @@ public class MemberReader {
 
     private final MemberRepository memberRepository;
 
-    public Member readLoginMember(String loginId, String password) {
+    public Member login(String loginId, String password) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_LOGIN));
 

@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lof.auth.domain.LoginToken;
+import com.lof.auth.service.dto.LoginToken;
 import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
 import com.lof.global.exception.AuthException;
@@ -41,12 +41,9 @@ class TokenManagerTest {
 
     @BeforeEach
     void init() {
-        tokenManager = new TokenManager(
-                "thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm",
+        tokenManager = new TokenManager("thisIslongEnoughTestSecretKeyForJWTHMACSHAalgorithm",
                 ACCESS_TOKEN_EXPIRATION,
-                REFRESH_TOKEN_EXPIRATION,
-                validRefreshTokenRepository,
-                invalidRefreshTokenRepository
+                REFRESH_TOKEN_EXPIRATION
         );
     }
 

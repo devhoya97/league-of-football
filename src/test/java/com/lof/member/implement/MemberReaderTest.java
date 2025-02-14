@@ -39,7 +39,7 @@ class MemberReaderTest {
         when(memberRepository.findByLoginId(loginId)).thenReturn(Optional.of(member));
 
         // when
-        Member readMember = memberReader.readLoginMember(loginId, password);
+        Member readMember = memberReader.login(loginId, password);
 
         // then
         assertThat(readMember).isEqualTo(member);
@@ -55,7 +55,7 @@ class MemberReaderTest {
         memberRepository.save(member);
 
         // when & then
-        assertThatThrownBy(() -> memberReader.readLoginMember(loginId + "anyString", password))
+        assertThatThrownBy(() -> memberReader.login(loginId + "anyString", password))
                 .isInstanceOf(BadRequestException.class)
                 .extracting((exception) -> ((BadRequestException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_LOGIN);
@@ -71,7 +71,7 @@ class MemberReaderTest {
         memberRepository.save(member);
 
         // when & then
-        assertThatThrownBy(() -> memberReader.readLoginMember(loginId, password + "anyString"))
+        assertThatThrownBy(() -> memberReader.login(loginId, password + "anyString"))
                 .isInstanceOf(BadRequestException.class)
                 .extracting((exception) -> ((BadRequestException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_LOGIN);

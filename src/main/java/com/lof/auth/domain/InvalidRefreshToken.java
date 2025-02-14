@@ -22,9 +22,9 @@ public class InvalidRefreshToken {
     private long memberId;
 
     @TimeToLive
-    private Long expirationInSeconds;
+    private Integer expirationInSeconds;
 
-    public InvalidRefreshToken(ValidRefreshToken validRefreshToken, Long expirationInSeconds) {
+    public InvalidRefreshToken(ValidRefreshToken validRefreshToken, int expirationInSeconds) {
         this(validRefreshToken.getRefreshToken(), validRefreshToken.getId(), expirationInSeconds);
     }
 }

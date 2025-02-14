@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lof.auth.controller.dto.LoginRequest;
 import com.lof.auth.controller.dto.LoginResponse;
-import com.lof.auth.domain.LoginToken;
+import com.lof.auth.service.dto.LoginToken;
 import com.lof.auth.service.AuthService;
 import com.lof.global.exception.AuthException;
 import com.lof.global.exception.ErrorCode;
@@ -26,7 +26,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-
         /*
         1. 웹계층에서 사용하는 dto를 service 계층까지 의존하지 않기 위해 값을 까서 넘김.
         만약 파라미터가 너무 많다면, service 호출을 위한 새로운 DTO를 만들 것 같다.
