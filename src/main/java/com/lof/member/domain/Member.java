@@ -9,11 +9,9 @@ import jakarta.persistence.Id;
 import com.lof.global.BaseEntity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
 @EqualsAndHashCode(of = "id")

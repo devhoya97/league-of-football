@@ -6,13 +6,17 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    // @NotBlank 또는 @NotNull 검증
-    NULL_OR_BLANK_PARAMETER("입력 값이 비어있거나 공백으로만 이루어져 있습니다."),
+    /*
+    int 값을 넘겨줄까 고민해봤는데, 토스페이먼츠 API를 보니까 에러코드를 String으로 약속하고
+    클라이언트 측에서 String을 약속된대로 파싱하는게 가독성이 좋지 않을까 생각했음
+    https://docs.tosspayments.com/reference/error-codes#%EA%B2%B0%EC%A0%9C-%EC%8A%B9%EC%9D%B8
+     */
+
+    // DTO의 @Valid에서 예외 발생한 경우 기본 메시지
+    INVALID_USER_INPUT("유효하지 사용자 입력입니다."),
 
     // 회원가입
     DUPLICATED_LOGINID("이미 존재하는 회원 아이디입니다."),
-    INVALID_LOGINID("아이디는 5~20자의 영문과 숫자로 구성되어야 하며, 숫자로만 이루어질 수 없습니다."),
-    INVALID_PASSWORD("비밀번호는 8~20자이며, 대문자, 소문자, 숫자, 특수문자(!@#$%^&*)를 최소 하나씩 포함해야 합니다."),
 
     // 로그인
     INVALID_LOGIN("아이디 또는 비밀번호를 다시 확인해주세요."),

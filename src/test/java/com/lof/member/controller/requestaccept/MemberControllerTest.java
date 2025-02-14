@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.lof.member.controller.MemberController;
 import com.lof.member.fixture.MemberFixture;
 import com.lof.member.service.MemberService;
-import com.lof.member.service.MemberValidator;
 
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {
@@ -26,8 +25,6 @@ class MemberControllerTest {
 
     @MockitoBean
     private MemberService memberService;
-    @MockitoBean
-    private MemberValidator memberValidator;
 
     @Test
     @DisplayName("명세에 맞게 회원 가입 API를 호출하면, 201 응답코드를 반환한다.")
