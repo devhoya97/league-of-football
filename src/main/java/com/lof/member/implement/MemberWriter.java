@@ -51,6 +51,6 @@ public class MemberWriter {
             return false;
         }
         String lowerCaseMessage = message.toLowerCase();
-        return lowerCaseMessage.contains("unique") && (lowerCaseMessage.contains("loginid") || lowerCaseMessage.contains(loginId));
+        return lowerCaseMessage.contains("duplicate") && (lowerCaseMessage.contains("loginid") || lowerCaseMessage.contains(loginId.toLowerCase()));
     }
 }
