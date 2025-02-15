@@ -53,11 +53,11 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("회원 아이디 규칙에 벗어나면 예외가 발생한다.")
+    @DisplayName("회원 이름 규칙에 벗어나면 예외가 발생한다.")
     @ValueSource(strings = {"aaaa", "12345", "a123456789a1234567890"})
-    void signUpFailByLoginId(String loginId) throws Exception {
+    void signUpFailByUsername(String username) throws Exception {
         // given
-        String signUpRequest = MemberFixture.createSignUpRequestString(loginId, MemberFixture.VALID_PASSWORD);
+        String signUpRequest = MemberFixture.createSignUpRequestString(username, MemberFixture.VALID_PASSWORD);
 
         // when & then
         mockMvc.perform(post("/signup")
@@ -66,7 +66,7 @@ class MemberControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("code", is(ErrorCode.INVALID_USER_INPUT.toString())))
-                .andExpect(jsonPath("message", is("아이디는 5~20자의 영문과 숫자로 구성되어야 하며, 숫자로만 이루어질 수 없습니다.")));
+                .andExpect(jsonPath("message", is("회원 이름은 5~20자의 영문과 숫자로 구성되어야 하며, 숫자로만 이루어질 수 없습니다.")));
     }
 
     @ParameterizedTest

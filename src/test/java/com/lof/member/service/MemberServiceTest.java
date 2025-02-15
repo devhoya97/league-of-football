@@ -20,18 +20,18 @@ class MemberServiceTest {
     private MemberService memberService;
 
     @Test
-    @DisplayName("loginId가 중복된 회원 생성을 시도하면 예외가 발생한다.")
+    @DisplayName("회원 이름이 중복된 회원 생성을 시도하면 예외가 발생한다.")
     void signUp() {
         // given
-        Member member1 = MemberFixture.createMember("sameLoginId", "password1");
-        Member member2 = MemberFixture.createMember("sameLoginId", "password2");
+        Member member1 = MemberFixture.createMember("sameUsername", "password1");
+        Member member2 = MemberFixture.createMember("sameUsername", "password2");
         memberService.signUp(member1);
 
         // when & then
         assertThatThrownBy(() -> memberService.signUp(member2))
                 .isInstanceOf(BadRequestException.class)
                 .extracting(exception -> ((BadRequestException) exception).getCode())
-                .isEqualTo(ErrorCode.DUPLICATED_LOGINID);
+                .isEqualTo(ErrorCode.DUPLICATED_USERNAME);
     }
 
 }

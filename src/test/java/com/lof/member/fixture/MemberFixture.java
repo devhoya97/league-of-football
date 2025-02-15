@@ -14,12 +14,12 @@ public class MemberFixture {
     }
 
     // member에 필드가 추가되면, 여러 테스트 코드가 깨지는데 이 때 변경 지점을 한 곳으로 몰기 위해 Fixture 사용
-    public static Member createMember(String loginId, String password) {
-        return new Member(loginId, password);
+    public static Member createMember(String username, String password) {
+        return new Member(username, password);
     }
 
-    public static Member createMember(long id, String loginId, String password) throws NoSuchFieldException, IllegalAccessException {
-        Member member = new Member(loginId, password);
+    public static Member createMember(long id, String username, String password) throws NoSuchFieldException, IllegalAccessException {
+        Member member = new Member(username, password);
         Field idField = Member.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(member, id);
@@ -27,16 +27,16 @@ public class MemberFixture {
         return member;
     }
 
-    public static String createSignUpRequestString(String loginId, String password) {
+    public static String createSignUpRequestString(String username, String password) {
         return String.format("""
                 {
-                    "loginId": "%s",
+                    "username": "%s",
                     "password": "%s"
                 }
-                """, loginId, password);
+                """, username, password);
     }
 
-    public static SignUpRequest createSignUpRequest(String loginId, String password) {
-        return new SignUpRequest(loginId, password);
+    public static SignUpRequest createSignUpRequest(String username, String password) {
+        return new SignUpRequest(username, password);
     }
 }

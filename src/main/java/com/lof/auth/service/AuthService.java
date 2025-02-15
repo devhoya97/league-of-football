@@ -18,13 +18,13 @@ public class AuthService {
     private final TokenManager tokenManager;
     private final TokenValidator tokenValidator;
 
-    public LoginToken issueLoginToken(String loginId, String password) {
+    public LoginToken issueLoginToken(String username, String password) {
         /*
         1. 로그인 정보에 해당하는 회원 찾기
         2. 회원 정보를 바탕으로 accessToken, refreshToken 발급받기
         3. 회원의 이전 refresh token이 존재한다면, 무효화시키기
          */
-        Member member = memberReader.login(loginId, password);
+        Member member = memberReader.login(username, password);
         String accessToken = tokenManager.createAccessToken(member);
         String refreshToken = tokenManager.createRefreshToken(member);
         tokenValidator.invalidatePreviousRefreshToken(member);

@@ -36,7 +36,7 @@ public class AuthController {
         따라서 service가 비즈니스 로직을 수행하기 위해 필요한 검증 따위의 작업을 도구(implement) 계층이라는 하위 계층에 위임하고
          service는 도구 계층의 객체들을 활용하는 방식으로 구현
          */
-        LoginToken token = authService.issueLoginToken(loginRequest.loginId(), loginRequest.password());
+        LoginToken token = authService.issueLoginToken(loginRequest.username(), loginRequest.password());
         return new LoginResponse(token);
     }
 

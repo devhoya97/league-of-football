@@ -23,12 +23,12 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String loginId;
+    private String username;
     @Column(nullable = false)
     private String password;
 
-    public Member(String loginId, String password) {
-        this.loginId = loginId;
+    public Member(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 }

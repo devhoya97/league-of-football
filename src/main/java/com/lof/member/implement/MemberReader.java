@@ -17,8 +17,8 @@ public class MemberReader {
 
     private final MemberRepository memberRepository;
 
-    public Member login(String loginId, String password) {
-        Member member = memberRepository.findByLoginId(loginId)
+    public Member login(String username, String password) {
+        Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_LOGIN));
 
         // Member 엔티티 안에 isCorrectPassword() 메서드를 만드는게 나을까? 아니면 여기서 getter로 비교하는게 나을까?

@@ -28,24 +28,24 @@ class MemberWriterTest {
     }
 
     @Test
-    @DisplayName("loginId가 중복되어 DataIntegrityViolationException이 발생하면 BadRequestException으로 전환시킨다.")
-    void saveDuplicatedLoginId() {
+    @DisplayName("회원 이름이 중복되어 DataIntegrityViolationException이 발생하면 BadRequestException으로 전환시킨다.")
+    void saveDuplicatedUsername() {
         // given
-        Member member = MemberFixture.createMember("loginId", "password");
-        when(memberRepository.save(member)).thenThrow(new DataIntegrityViolationException("Duplicated loginId"));
+        Member member = MemberFixture.createMember("username", "password");
+        when(memberRepository.save(member)).thenThrow(new DataIntegrityViolationException("Duplicated username"));
 
         // when & then
         assertThatThrownBy(() -> memberWriter.save(member))
                 .isInstanceOf(BadRequestException.class)
                 .extracting(exception -> ((BadRequestException) exception).getCode())
-                .isEqualTo(ErrorCode.DUPLICATED_LOGINID);
+                .isEqualTo(ErrorCode.DUPLICATED_USERNAME);
     }
 
     @Test
-    @DisplayName("loginId가 중복되는 경우를 제외하고 DataIntegrityViolationException이 발생하면 예외를 전환시키지 않는다.")
+    @DisplayName("회원 이름이 중복되는 경우를 제외하고 DataIntegrityViolationException이 발생하면 예외를 전환시키지 않는다.")
     void saveThrowDataIntegrityViolationException() {
         // given
-        Member member = MemberFixture.createMember("loginId", "password");
+        Member member = MemberFixture.createMember("username", "password");
         when(memberRepository.save(member)).thenThrow(new DataIntegrityViolationException("fk constraints"));
 
         // when & then

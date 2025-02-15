@@ -16,10 +16,10 @@ public enum ErrorCode {
     INVALID_USER_INPUT("유효하지 사용자 입력입니다."),
 
     // 회원가입
-    DUPLICATED_LOGINID("이미 존재하는 회원 아이디입니다."),
+    DUPLICATED_USERNAME("이미 존재하는 회원 이름입니다."),
 
     // 로그인
-    INVALID_LOGIN("아이디 또는 비밀번호를 다시 확인해주세요."),
+    INVALID_LOGIN("회원 이름 또는 비밀번호를 다시 확인해주세요."),
     INVALID_TOKEN("토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN("만료된 토큰입니다."),
     MISSING_TOKEN("요청에 토큰을 포함해주세요."),

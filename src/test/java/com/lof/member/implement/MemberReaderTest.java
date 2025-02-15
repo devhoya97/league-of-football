@@ -30,48 +30,48 @@ class MemberReaderTest {
     }
 
     @Test
-    @DisplayName("로그인 아이디와 비밀번호로 회원을 찾아온다.")
+    @DisplayName("회원 이름 비밀번호로 회원을 찾아온다.")
     void readLoginMember() {
         // given
-        String loginId = "loginId";
+        String username = "username";
         String password = "password";
-        Member member = MemberFixture.createMember(loginId, password);
-        when(memberRepository.findByLoginId(loginId)).thenReturn(Optional.of(member));
+        Member member = MemberFixture.createMember(username, password);
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.of(member));
 
         // when
-        Member readMember = memberReader.login(loginId, password);
+        Member readMember = memberReader.login(username, password);
 
         // then
         assertThat(readMember).isEqualTo(member);
     }
 
     @Test
-    @DisplayName("로그인 아이디와 비밀번호로 회원을 찾아올 때, 아이디가 틀리면 예외가 발생한다.")
-    void readLoginMemberByInvalidLoginId() {
+    @DisplayName("회원 이름과 비밀번호로 회원을 찾아올 때, 회원 이름이 틀리면 예외가 발생한다.")
+    void readLoginMemberByInvalidUsername() {
         // given
-        String loginId = "loginId";
+        String username = "username";
         String password = "password";
-        Member member = MemberFixture.createMember(loginId, password);
+        Member member = MemberFixture.createMember(username, password);
         memberRepository.save(member);
 
         // when & then
-        assertThatThrownBy(() -> memberReader.login(loginId + "anyString", password))
+        assertThatThrownBy(() -> memberReader.login(username + "anyString", password))
                 .isInstanceOf(BadRequestException.class)
                 .extracting((exception) -> ((BadRequestException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_LOGIN);
     }
 
     @Test
-    @DisplayName("로그인 아이디와 비밀번호로 회원을 찾아올 때, 비밀번호가 틀리면 예외가 발생한다.")
+    @DisplayName("회원 이름과 비밀번호로 회원을 찾아올 때, 비밀번호가 틀리면 예외가 발생한다.")
     void readLoginMemberByInvalidPassword() {
         // given
-        String loginId = "loginId";
+        String username = "username";
         String password = "password";
-        Member member = MemberFixture.createMember(loginId, password);
+        Member member = MemberFixture.createMember(username, password);
         memberRepository.save(member);
 
         // when & then
-        assertThatThrownBy(() -> memberReader.login(loginId, password + "anyString"))
+        assertThatThrownBy(() -> memberReader.login(username, password + "anyString"))
                 .isInstanceOf(BadRequestException.class)
                 .extracting((exception) -> ((BadRequestException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_LOGIN);

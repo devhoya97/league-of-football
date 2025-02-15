@@ -41,7 +41,7 @@ class TokenValidatorTest {
         // given
         long memberId = 1L;
         String refreshToken = "refreshToken";
-        Member member = MemberFixture.createMember(memberId, "loginId", "password");
+        Member member = MemberFixture.createMember(memberId, "username", "password");
         validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, 60L));
         when(tokenManager.parseExpirationSeconds(refreshToken)).thenReturn(60);
 

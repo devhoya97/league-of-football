@@ -25,57 +25,57 @@ class MemberRepositoryTest {
     private MemberRepository memberRepository;
 
     @Test
-    @DisplayName("loginId로 회원을 찾는다.")
-    void findByLoginId() {
+    @DisplayName("회원 이름으로 회원을 찾는다.")
+    void findByUsername() {
         // given
-        String loginId = "loginId";
-        Member member = MemberFixture.createMember(loginId, "password");
+        String username = "username";
+        Member member = MemberFixture.createMember(username, "password");
         memberRepository.save(member);
 
         // when
-        Member foundMember = memberRepository.findByLoginId(loginId).get();
+        Member foundMember = memberRepository.findByUsername(username).get();
 
         // then
         assertThat(foundMember).isEqualTo(member);
     }
 
     @Test
-    @DisplayName("중복되는 loginId를 저장하려고 시도하면 관련된 메시지와 함께 DataIntegrityViolationException이 발생한다.")
-    void saveDuplicatedLoginID() {
+    @DisplayName("중복되는 회원 이름을 저장하려고 시도하면 관련된 메시지와 함께 DataIntegrityViolationException이 발생한다.")
+    void saveDuplicatedUsername() {
         // given
-        Member member1 = MemberFixture.createMember("loginId", "password");
-        Member member2 = MemberFixture.createMember("loginId", "password");
+        Member member1 = MemberFixture.createMember("username", "password");
+        Member member2 = MemberFixture.createMember("username", "password");
         memberRepository.save(member1);
 
         // when & then
         assertThatThrownBy(() -> memberRepository.save(member2))
                 .isInstanceOf(DataIntegrityViolationException.class)
                 .hasMessageContaining("Duplicate")
-                .hasMessageContaining("loginId");
+                .hasMessageContaining("username");
     }
 
 
     @Test
-    @DisplayName("저장되지 않은 loginId로 회원을 찾으면 empty를 반환한다.")
-    void findByLoginIdNotExists() {
+    @DisplayName("저장되지 않은 회원 이름으로 회원을 찾으면 empty를 반환한다.")
+    void findByUsernameNotExists() {
         // when
-        Optional<Member> found = memberRepository.findByLoginId("loginId");
+        Optional<Member> found = memberRepository.findByUsername("username");
 
         // then
         assertThat(found.isEmpty()).isTrue();
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"loginId, true", "notExist, false"})
-    @DisplayName("loginId에 해당하는 회원이 존재하는지 확인한다.")
-    void existsByLoginId(String loginId, boolean expected) {
+    @CsvSource(value = {"username, true", "notExist, false"})
+    @DisplayName("회원 이름 해당하는 회원이 존재하는지 확인한다.")
+    void existsByUsername(String username, boolean expected) {
         // given
-        String savedLoginId = "loginId";
-        Member member = MemberFixture.createMember(savedLoginId, "password");
+        String savedUsername = "username";
+        Member member = MemberFixture.createMember(savedUsername, "password");
         memberRepository.save(member);
 
         // when
-        boolean result = memberRepository.existsByLoginId(loginId);
+        boolean result = memberRepository.existsByUsername(username);
 
         // then
         assertThat(result).isEqualTo(expected);
