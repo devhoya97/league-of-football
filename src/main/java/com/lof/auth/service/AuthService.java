@@ -7,6 +7,7 @@ import com.lof.auth.implement.TokenManager;
 import com.lof.auth.implement.TokenValidator;
 import com.lof.member.domain.Member;
 import com.lof.member.implement.MemberReader;
+import com.lof.member.implement.MemberWriter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,8 +16,13 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private final MemberReader memberReader;
+    private final MemberWriter memberWriter;
     private final TokenManager tokenManager;
     private final TokenValidator tokenValidator;
+
+    public void signUp(Member member) {
+        memberWriter.save(member);
+    }
 
     public LoginToken issueLoginToken(String username, String password) {
         /*
