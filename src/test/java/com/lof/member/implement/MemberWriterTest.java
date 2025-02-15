@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.lof.global.exception.BadRequestException;
 import com.lof.global.exception.ErrorCode;
@@ -28,28 +27,17 @@ class MemberWriterTest {
     }
 
     @Test
-    @DisplayName("회원 이름이 중복되어 DataIntegrityViolationException이 발생하면 BadRequestException으로 전환시킨다.")
+    @DisplayName("이미 존재하는 회원 이름으로 회원 가입에 시도하면, 지정해둔 예외가 발생한다.")
     void saveDuplicatedUsername() {
         // given
-        Member member = MemberFixture.createMember("username", "password");
-        when(memberRepository.save(member)).thenThrow(new DataIntegrityViolationException("Duplicated username"));
+        String username = "existUsername";
+        when(memberRepository.existsByUsername(username)).thenReturn(true);
+        Member member = MemberFixture.createMember(username, "password");
 
         // when & then
         assertThatThrownBy(() -> memberWriter.save(member))
                 .isInstanceOf(BadRequestException.class)
-                .extracting(exception -> ((BadRequestException) exception).getCode())
+                .extracting(e -> ((BadRequestException) e).getCode())
                 .isEqualTo(ErrorCode.DUPLICATED_USERNAME);
-    }
-
-    @Test
-    @DisplayName("회원 이름이 중복되는 경우를 제외하고 DataIntegrityViolationException이 발생하면 예외를 전환시키지 않는다.")
-    void saveThrowDataIntegrityViolationException() {
-        // given
-        Member member = MemberFixture.createMember("username", "password");
-        when(memberRepository.save(member)).thenThrow(new DataIntegrityViolationException("fk constraints"));
-
-        // when & then
-        assertThatThrownBy(() -> memberWriter.save(member))
-                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }
