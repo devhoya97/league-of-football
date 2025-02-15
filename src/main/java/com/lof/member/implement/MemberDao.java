@@ -9,16 +9,17 @@ import com.lof.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * baeldung의 설명을 보면, Dao가 DB에 더 가깝고 Repository가 Dao를 이용한다고 되어있는데,
+ * 네이밍이 괜찮을지?
+ * https://www.baeldung.com/java-dao-vs-repository
+ */
 @Component
 @RequiredArgsConstructor
-public class MemberWriter {
+public class MemberDao {
 
     private final MemberRepository memberRepository;
 
-    /**
-     * validateDuplicatedUsername이 만약 없다면, unique 제약조건에 의해 예외가 터질텐데
-     * validateDuplicatedUsername에서 먼저 확인했을 때 어떤 이점이 있는가?
-     */
     public void save(Member member) {
         validateDuplicatedUsername(member);
         memberRepository.save(member);
@@ -28,5 +29,15 @@ public class MemberWriter {
         if (memberRepository.existsByUsername(member.getUsername())) {
             throw new BadRequestException(ErrorCode.DUPLICATED_USERNAME);
         }
+    }
+
+    public Member getMemberByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_LOGIN));
+    }
+
+    public Member getMemberById(long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. memberId = " + memberId));
     }
 }

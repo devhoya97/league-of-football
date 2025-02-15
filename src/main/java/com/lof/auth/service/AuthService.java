@@ -2,12 +2,12 @@ package com.lof.auth.service;
 
 import org.springframework.stereotype.Service;
 
+import com.lof.auth.implement.AuthRequestValidator;
 import com.lof.auth.service.dto.LoginToken;
 import com.lof.auth.implement.TokenManager;
 import com.lof.auth.implement.TokenValidator;
 import com.lof.member.domain.Member;
-import com.lof.member.implement.MemberReader;
-import com.lof.member.implement.MemberWriter;
+import com.lof.member.implement.MemberDao;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,22 +15,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final MemberReader memberReader;
-    private final MemberWriter memberWriter;
+    private final MemberDao memberDao;
+    private final AuthRequestValidator requestValidator;
     private final TokenManager tokenManager;
     private final TokenValidator tokenValidator;
 
     public void signUp(Member member) {
-        memberWriter.save(member);
+        requestValidator.validateDuplicatedUsername(member.getUsername());
+        memberDao.save(member);
     }
 
     public LoginToken issueLoginToken(String username, String password) {
         /*
-        1. 로그인 정보에 해당하는 회원 찾기
-        2. 회원 정보를 바탕으로 accessToken, refreshToken 발급받기
-        3. 회원의 이전 refresh token이 존재한다면, 무효화시키기
+        1. username에 해당하는 회원 찾기
+        2. 회원 비밀번호 검증
+        3. 회원 정보를 바탕으로 accessToken, refreshToken 발급받기
+        4. 회원의 이전 refresh token이 존재한다면, 무효화시키기
          */
-        Member member = memberReader.login(username, password);
+        Member member = memberDao.getMemberByUsername(username);
+        requestValidator.validatePassword(member.getPassword(), password);
         String accessToken = tokenManager.createAccessToken(member);
         String refreshToken = tokenManager.createRefreshToken(member);
         tokenValidator.invalidatePreviousRefreshToken(member);
@@ -49,7 +52,7 @@ public class AuthService {
          */
         tokenValidator.validateRefreshToken(refreshToken);
         long memberId = tokenManager.parseMemberId(refreshToken);
-        Member member = memberReader.read(memberId);
+        Member member = memberDao.getMemberById(memberId);
         tokenValidator.invalidatePreviousRefreshToken(member);
         String accessToken = tokenManager.createAccessToken(member);
         String newRefreshToken = tokenManager.createRefreshToken(member);
