@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.lof.global.exception.AuthException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 
 import io.jsonwebtoken.Claims;
@@ -51,9 +51,9 @@ public class TokenParser {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
+            throw new BizException(ErrorCode.INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
-            throw new AuthException(ErrorCode.EXPIRED_TOKEN);
+            throw new BizException(ErrorCode.EXPIRED_TOKEN);
         }
     }
 }

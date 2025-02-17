@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
-import com.lof.global.exception.BadRequestException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.repository.MemberRepository;
 
@@ -18,13 +18,13 @@ public class AuthRequestValidator {
 
     public void validateDuplicatedUsername(String username) {
         if (memberRepository.existsByUsername(username)) {
-            throw new BadRequestException(ErrorCode.DUPLICATED_USERNAME);
+            throw new BizException(ErrorCode.DUPLICATED_USERNAME);
         }
     }
 
     public void validatePassword(String actualPassword, String requestPassword) {
         if (!Objects.equals(actualPassword, requestPassword)) {
-            throw new BadRequestException(ErrorCode.INVALID_LOGIN);
+            throw new BizException(ErrorCode.INVALID_LOGIN);
         }
     }
 }

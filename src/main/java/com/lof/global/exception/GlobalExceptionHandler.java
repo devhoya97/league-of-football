@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,10 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(BadRequestException e) {
-        log.error("code: {}, message: {}", e.getCode().toString(), e.getMessage(), e);
-        return new ErrorResponse(e.getCode().toString(), e.getMessage());
+    public ResponseEntity<ErrorResponse> handleBadRequestException(BizException e) {
+        log.error("code: {}, message: {}", e.getCode().toString(), e.getMessage(), e); // TODO: 인터셉터로 이동
+        ErrorResponse errorResponse = new ErrorResponse(e.getCode().toString(), e.getMessage());
+
+        return ResponseEntity.status(e.getCode().getHttpStatus())
+                .body(errorResponse);
     }
 
     @ExceptionHandler
@@ -34,16 +37,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleAuthException(AuthException e) {
-        log.error("code: {}, message: {}", e.getCode().toString(), e.getMessage(), e);
-        return new ErrorResponse(e.getCode().toString(), e.getMessage());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleInternalServerError(Exception e) {
+    public ErrorResponse handleInternalServerError(Exception e) {
         log.error(e.getMessage(), e);
-        return "서버에서 예기치 못한 에러가 발생했습니다. 잠시 후 다시 시도해주세요.";
+        return new ErrorResponse("INTERNAL_SERVER_ERROR", "서버에서 예기치 못한 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 }

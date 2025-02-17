@@ -1,7 +1,6 @@
 package com.lof.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import com.lof.global.exception.BadRequestException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 import com.lof.member.fixture.MemberFixture;
@@ -30,8 +29,8 @@ class AuthServiceTest {
 
         // when & then
         assertThatThrownBy(() -> authService.signUp(member2))
-                .isInstanceOf(BadRequestException.class)
-                .extracting(exception -> ((BadRequestException) exception).getCode())
+                .isInstanceOf(BizException.class)
+                .extracting(exception -> ((BizException) exception).getCode())
                 .isEqualTo(ErrorCode.DUPLICATED_USERNAME);
     }
 }

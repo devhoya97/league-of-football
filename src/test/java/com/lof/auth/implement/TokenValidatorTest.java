@@ -15,7 +15,7 @@ import com.lof.auth.domain.InvalidRefreshToken;
 import com.lof.auth.domain.ValidRefreshToken;
 import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
-import com.lof.global.exception.AuthException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 import com.lof.member.fixture.MemberFixture;
@@ -72,8 +72,8 @@ class TokenValidatorTest {
 
         // when & then
         assertThatThrownBy(() -> tokenValidator.validateRefreshToken(refreshToken))
-                .isInstanceOf(AuthException.class)
-                .extracting((exception) -> ((AuthException) exception).getCode())
+                .isInstanceOf(BizException.class)
+                .extracting((exception) -> ((BizException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_TOKEN);
     }
 }

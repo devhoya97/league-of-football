@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.lof.auth.domain.InvalidRefreshToken;
 import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
-import com.lof.global.exception.AuthException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class TokenValidator {
     public void validateRefreshToken(String refreshToken) {
         invalidRefreshTokenRepository.findById(refreshToken)
                 .ifPresent((invalidRefreshToken) -> {
-                    throw new AuthException(ErrorCode.INVALID_TOKEN);
+                    throw new BizException(ErrorCode.INVALID_TOKEN);
                 });
     }
 }

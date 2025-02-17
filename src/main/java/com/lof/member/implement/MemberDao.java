@@ -2,7 +2,7 @@ package com.lof.member.implement;
 
 import org.springframework.stereotype.Component;
 
-import com.lof.global.exception.BadRequestException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.domain.Member;
 import com.lof.member.repository.MemberRepository;
@@ -27,13 +27,13 @@ public class MemberDao {
 
     private void validateDuplicatedUsername(Member member) {
         if (memberRepository.existsByUsername(member.getUsername())) {
-            throw new BadRequestException(ErrorCode.DUPLICATED_USERNAME);
+            throw new BizException(ErrorCode.DUPLICATED_USERNAME);
         }
     }
 
     public Member getMemberByUsername(String username) {
         return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_LOGIN));
+                .orElseThrow(() -> new BizException(ErrorCode.INVALID_LOGIN));
     }
 
     public Member getMemberById(long memberId) {

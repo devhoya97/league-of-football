@@ -15,7 +15,7 @@ import com.lof.auth.controller.dto.LoginRequest;
 import com.lof.auth.controller.dto.LoginResponse;
 import com.lof.auth.implement.dto.LoginToken;
 import com.lof.auth.service.AuthService;
-import com.lof.global.exception.AuthException;
+import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 import com.lof.member.controller.SignUpRequest;
 import com.lof.member.domain.Member;
@@ -52,7 +52,7 @@ public class AuthController {
     public LoginResponse loginRefresh(HttpServletRequest request) {
         String refreshToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (refreshToken == null) {
-            throw new AuthException(ErrorCode.MISSING_TOKEN);
+            throw new BizException(ErrorCode.MISSING_TOKEN);
         }
 
         LoginToken token = authService.reissueLoginToken(refreshToken);
