@@ -1,4 +1,4 @@
-package com.lof.config;
+package com.lof.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;

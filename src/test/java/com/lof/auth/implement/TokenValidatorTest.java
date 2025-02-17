@@ -3,7 +3,7 @@ package com.lof.auth.implement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,14 +25,14 @@ class TokenValidatorTest {
     private TokenValidator tokenValidator;
     private ValidRefreshTokenRepository validRefreshTokenRepository;
     private InvalidRefreshTokenRepository invalidRefreshTokenRepository;
-    private TokenManager tokenManager;
+    private TokenParser tokenParser;
 
     @BeforeEach
     void init() {
         validRefreshTokenRepository = new FakeValidRefreshTokenRepository();
         invalidRefreshTokenRepository = new FakeInvalidRefreshTokenRepository();
-        tokenManager = mock(TokenManager.class);
-        tokenValidator = new TokenValidator(validRefreshTokenRepository, invalidRefreshTokenRepository, tokenManager);
+        tokenParser = mock(TokenParser.class);
+        tokenValidator = new TokenValidator(tokenParser, validRefreshTokenRepository, invalidRefreshTokenRepository);
     }
 
     @Test
@@ -43,15 +43,16 @@ class TokenValidatorTest {
         String refreshToken = "refreshToken";
         Member member = MemberFixture.createMember(memberId, "username", "password");
         validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, 60L));
-        when(tokenManager.parseExpirationSeconds(refreshToken)).thenReturn(60);
+        when(tokenParser.parseExpirationSeconds(refreshToken)).thenReturn(60);
 
         // when
-        tokenValidator.invalidatePreviousRefreshToken(member);
+        tokenValidator.invalidatePreviousRefreshToken(member.getId());
 
         // then
         assertAll(
                 () -> assertThat(validRefreshTokenRepository.findById(memberId)).isEmpty(),
-                () -> assertThat(invalidRefreshTokenRepository.findById(refreshToken).get().getMemberId()).isEqualTo(memberId)
+                () -> assertThat(invalidRefreshTokenRepository.findById(refreshToken).get()
+                        .getMemberId()).isEqualTo(memberId)
         );
     }
 

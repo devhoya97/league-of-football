@@ -1,85 +1,38 @@
 package com.lof.auth.implement;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.lof.global.exception.AuthException;
-import com.lof.global.exception.ErrorCode;
-import com.lof.member.domain.Member;
+import com.lof.auth.implement.dto.LoginToken;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class TokenManager {
 
-    private static final long MILLIS_TO_SECONDS = 1000L;
+    private final TokenValidator tokenValidator;
+    private final TokenIssuer tokenIssuer;
+    private final TokenParser tokenParser;
 
-    private final String secret;
-    private final long accessTokenExpiration;
-    private final long refreshTokenExpiration;
+    // refreshToken으로 memberId를 파싱하는 경우는, 토큰 재발급 외엔 없다.
+    public LoginToken reissueLoginToken(String refreshToken) {
+        tokenValidator.validateRefreshToken(refreshToken);
+        long memberId = tokenParser.parseMemberId(refreshToken);
 
-    public TokenManager(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration.access}") long accessTokenExpiration,
-            @Value("${jwt.expiration.refresh}") long refreshTokenExpiration
-    ) {
-        this.secret = secret;
-        this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
+        return createLoginToken(memberId);
     }
 
-    public String createAccessToken(Member member) {
-        return createToken(member, accessTokenExpiration);
+    public LoginToken createLoginToken(long memberId) {
+        tokenValidator.invalidatePreviousRefreshToken(memberId);
+
+        String accessToken = tokenIssuer.createAccessToken(memberId);
+        String refreshToken = tokenIssuer.createRefreshToken(memberId);
+
+        return new LoginToken(accessToken, refreshToken);
     }
 
-    public String createRefreshToken(Member member) {
-        return createToken(member, refreshTokenExpiration);
-    }
-
-    private String createToken(Member member, long expiration) {
-        return Jwts.builder()
-                .setSubject(String.valueOf(member.getId()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .compact();
-    }
-
-    public long parseMemberId(String token) {
-        Claims claims = parseClaims(token);
-
-        return Long.parseLong(claims.getSubject());
-    }
-
-    public int parseExpirationSeconds(String token) {
-        Claims claims = parseClaims(token);
-        Date expiration = claims.getExpiration();
-
-        long now = System.currentTimeMillis();
-        long expirationMillis = expiration.getTime() - now;
-
-        return (int) (expirationMillis / MILLIS_TO_SECONDS);
-    }
-
-    private Claims parseClaims(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
-        } catch (ExpiredJwtException e) {
-            throw new AuthException(ErrorCode.EXPIRED_TOKEN);
-        }
+    // refreshToken으로부터 memberId를 파싱하려면, tokenValidator.validateRefreshToken(refreshToken)을 꼭 거쳐야 함.
+    public long parseAccessTokenToMemberId(String accessToken) {
+        return tokenParser.parseMemberId(accessToken);
     }
 }
