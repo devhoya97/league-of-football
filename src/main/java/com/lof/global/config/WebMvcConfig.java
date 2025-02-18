@@ -18,13 +18,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 로그인터셉터에서 memberId를 로깅하고 싶어서 순서가 2번째인데 많이 부자연스럽나?
-        registry.addInterceptor(new AuthInterceptor(tokenParser))
+        registry.addInterceptor(new LogInterceptor())
                 .order(1)
+                .addPathPatterns("/**");
+        registry.addInterceptor(new AuthInterceptor(tokenParser))
+                .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login", "/signup");
-        registry.addInterceptor(new LogInterceptor())
-                .order(2)
-                .addPathPatterns("/**");
     }
 }

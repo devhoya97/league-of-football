@@ -17,8 +17,6 @@ import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
 import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
-import com.lof.member.domain.Member;
-import com.lof.member.fixture.MemberFixture;
 
 class TokenValidatorTest {
 
