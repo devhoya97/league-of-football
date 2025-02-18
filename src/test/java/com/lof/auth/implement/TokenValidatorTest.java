@@ -41,12 +41,11 @@ class TokenValidatorTest {
         // given
         long memberId = 1L;
         String refreshToken = "refreshToken";
-        Member member = MemberFixture.createMember(memberId, "username", "password");
         validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, 60L));
         when(tokenParser.parseExpirationSeconds(refreshToken)).thenReturn(60);
 
         // when
-        tokenValidator.invalidatePreviousRefreshToken(member.getId());
+        tokenValidator.invalidatePreviousRefreshToken(memberId);
 
         // then
         assertAll(
@@ -57,21 +56,43 @@ class TokenValidatorTest {
     }
 
     @Test
-    @DisplayName("사용하려는 RefreshToken이 InvalidRefreshTokenRepository에 존재하지 않으면 검증에 통과한다.")
+    @DisplayName("사용하려는 RefreshToken이 ValidRefreshTokenRepository에 존재하면서 InvalidRefreshTokenRepository에 존재하지 않으면 검증에 통과한다.")
     void validateRefreshToken() {
-        assertThatCode(() -> tokenValidator.validateRefreshToken("refreshToken"))
+        // given
+        long memberId = 1L;
+        String refreshToken = "refreshToken";
+        validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, 60L));
+
+        // when & then
+        assertThatCode(() -> tokenValidator.validateRefreshToken(memberId, "refreshToken"))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("사용하려는 RefreshToken이 InvalidRefreshTokenRepository에 존재하면 예외가 발생한다.")
-    void validateRefreshTokenThrowException() {
+    @DisplayName("사용하려는 RefreshToken이 ValidRefreshTokenRepository에 존재하지 않으면 예외가 발생한다.")
+    void validateRefreshTokenNotExists() {
         // given
+        long memberId = 1L;
         String refreshToken = "refreshToken";
+
+        // when & then
+        assertThatThrownBy(() -> tokenValidator.validateRefreshToken(memberId, refreshToken))
+                .isInstanceOf(BizException.class)
+                .extracting((exception) -> ((BizException) exception).getCode())
+                .isEqualTo(ErrorCode.INVALID_TOKEN);
+    }
+
+    @Test
+    @DisplayName("사용하려는 RefreshToken이 InvalidRefreshTokenRepository에 존재하면 예외가 발생한다.")
+    void validateRefreshTokenByInvalidRefreshToken() {
+        // given
+        long memberId = 1L;
+        String refreshToken = "refreshToken";
+        validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, 60L));
         invalidRefreshTokenRepository.save(new InvalidRefreshToken(refreshToken, 1L, 60));
 
         // when & then
-        assertThatThrownBy(() -> tokenValidator.validateRefreshToken(refreshToken))
+        assertThatThrownBy(() -> tokenValidator.validateRefreshToken(memberId, refreshToken))
                 .isInstanceOf(BizException.class)
                 .extracting((exception) -> ((BizException) exception).getCode())
                 .isEqualTo(ErrorCode.INVALID_TOKEN);

@@ -1,8 +1,11 @@
 package com.lof.auth.implement;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import com.lof.auth.domain.InvalidRefreshToken;
+import com.lof.auth.domain.ValidRefreshToken;
 import com.lof.auth.repository.InvalidRefreshTokenRepository;
 import com.lof.auth.repository.ValidRefreshTokenRepository;
 import com.lof.global.exception.BizException;
@@ -22,6 +25,10 @@ public class TokenValidator {
     Repository(Redis)를 mocking해서 테스트하려면 어떻게 해야하지?
     stub으로 해야하나?
      */
+    public void saveValidRefreshToken(long memberId, String refreshToken, long expiration) {
+        validRefreshTokenRepository.save(new ValidRefreshToken(memberId, refreshToken, expiration));
+    }
+
     public void invalidatePreviousRefreshToken(long memberId) {
         validRefreshTokenRepository.findById(memberId)
                 .ifPresent((validRefreshToken) -> {
@@ -31,7 +38,14 @@ public class TokenValidator {
                 });
     }
 
-    public void validateRefreshToken(String refreshToken) {
+    public void validateRefreshToken(long memberId, String refreshToken) {
+        ValidRefreshToken validRefreshToken = validRefreshTokenRepository.findById(memberId)
+                .orElseThrow(() -> new BizException(ErrorCode.INVALID_TOKEN));
+
+        if (!Objects.equals(validRefreshToken.getRefreshToken(), refreshToken)) {
+            throw new BizException(ErrorCode.INVALID_TOKEN);
+        }
+
         invalidRefreshTokenRepository.findById(refreshToken)
                 .ifPresent((invalidRefreshToken) -> {
                     throw new BizException(ErrorCode.INVALID_TOKEN);

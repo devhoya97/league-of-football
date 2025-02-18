@@ -7,6 +7,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.lof.auth.controller.AuthController;
+import com.lof.auth.implement.TokenParser;
 import com.lof.auth.service.AuthService;
 import com.lof.member.controller.MemberController;
 import com.lof.member.service.MemberService;
@@ -25,4 +26,7 @@ public abstract class ControllerTest {
 
     @MockitoBean
     protected MemberService memberService;
+
+    @MockitoBean
+    protected TokenParser tokenParser;
 }

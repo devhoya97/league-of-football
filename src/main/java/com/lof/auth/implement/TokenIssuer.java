@@ -41,4 +41,8 @@ public class TokenIssuer {
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
+
+    public long getRefreshTokenExpiration() {
+        return refreshTokenExpiration;
+    }
 }
