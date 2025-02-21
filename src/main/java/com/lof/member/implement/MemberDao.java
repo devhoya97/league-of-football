@@ -21,14 +21,7 @@ public class MemberDao {
     private final MemberRepository memberRepository;
 
     public void save(Member member) {
-        validateDuplicatedUsername(member);
         memberRepository.save(member);
-    }
-
-    private void validateDuplicatedUsername(Member member) {
-        if (memberRepository.existsByUsername(member.getUsername())) {
-            throw new BizException(ErrorCode.DUPLICATED_USERNAME);
-        }
     }
 
     public Member getMemberByUsername(String username) {
