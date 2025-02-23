@@ -5,9 +5,10 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,5 +56,9 @@ public class AuthController {
         return new LoginResponse(token);
     }
 
-    // TODO: 로그아웃 구현
+    @PostMapping("/logout")
+    public void logout(@RequestAttribute long memberId,
+                       @RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {
+        authService.logout(memberId, refreshToken);
+    }
 }

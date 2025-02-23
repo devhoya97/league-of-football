@@ -104,4 +104,18 @@ class AuthControllerTest extends ControllerTest {
                 .andExpect(jsonPath("accessToken", is("accessToken")))
                 .andExpect(jsonPath("refreshToken", is("newRefreshToken")));
     }
+
+    @Test
+    @DisplayName("로그아웃 시에는 refreshToken을 요청에 포함해야 한다.")
+    void logout() throws Exception {
+        // given
+        when(tokenParser.parseMemberId("refreshToken"))
+                .thenReturn(1L);
+
+        // when & then
+        mockMvc.perform(post("/logout")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "refreshToken"))
+                .andExpect(status().isOk());
+    }
 }

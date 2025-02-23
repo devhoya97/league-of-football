@@ -28,4 +28,9 @@ public class TokenManager {
 
         return new LoginToken(accessToken, refreshToken);
     }
+
+    public void invalidateRefreshToken(long memberId, String refreshToken) {
+        tokenValidator.validateRefreshToken(memberId, refreshToken);
+        tokenValidator.invalidatePreviousRefreshToken(memberId);
+    }
 }

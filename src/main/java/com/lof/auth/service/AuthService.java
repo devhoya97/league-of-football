@@ -47,4 +47,8 @@ public class AuthService {
          */
         return tokenManager.reissueLoginToken(memberId, refreshToken);
     }
+
+    public void logout(long memberId, String refreshToken) {
+        tokenManager.invalidateRefreshToken(memberId, refreshToken);
+    }
 }
