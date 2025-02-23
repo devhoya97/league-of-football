@@ -25,6 +25,15 @@ public class MemberFixture {
                 """, username, password);
     }
 
+    public static String createLoginRequestString(String username, String password) {
+        return String.format("""
+                {
+                    "username": "%s",
+                    "password": "%s"
+                }
+                """, username, password);
+    }
+
     public static SignUpRequest createSignUpRequest(String username, String password) {
         return new SignUpRequest(username, password);
     }
