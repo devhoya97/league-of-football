@@ -1,6 +1,5 @@
 package com.lof.auth.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
@@ -48,10 +47,8 @@ public class AuthController {
      * 필터, 인터셉터는 딱 로깅이랑 어드민이 맞는 것 같음
      */
     @PostMapping("/login-refresh")
-    public LoginResponse loginRefresh(HttpServletRequest request) {
-        long memberId = (long) request.getAttribute("memberId");
-        String refreshToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-
+    public LoginResponse loginRefresh(@RequestAttribute long memberId,
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {
         LoginToken token = authService.reissueLoginToken(memberId, refreshToken);
         return new LoginResponse(token);
     }
