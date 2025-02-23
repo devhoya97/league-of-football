@@ -46,7 +46,7 @@ public class AuthController {
      * HttpServletRequest.setAttribute()로 값을 넣어주는 것보다 argumentResolver를 사용하는게 더 직관적인 것 같음.
      * 필터, 인터셉터는 딱 로깅이랑 어드민이 맞는 것 같음
      */
-    @GetMapping("/login-refresh")
+    @PostMapping("/login-refresh")
     public LoginResponse loginRefresh(HttpServletRequest request) {
         long memberId = (long) request.getAttribute("memberId");
         String refreshToken = request.getHeader(HttpHeaders.AUTHORIZATION);

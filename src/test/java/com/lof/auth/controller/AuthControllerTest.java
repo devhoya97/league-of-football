@@ -2,7 +2,6 @@ package com.lof.auth.controller;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -97,7 +96,7 @@ class AuthControllerTest extends ControllerTest {
                 .thenReturn(1L);
 
         // when & then
-        mockMvc.perform(get("/login-refresh")
+        mockMvc.perform(post("/login-refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "refreshToken"))
                 .andExpect(status().isOk())
