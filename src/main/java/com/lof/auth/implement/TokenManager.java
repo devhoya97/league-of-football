@@ -20,17 +20,13 @@ public class TokenManager {
     }
 
     public LoginToken createLoginToken(long memberId) {
-        tokenValidator.invalidatePreviousRefreshToken(memberId);
+        LoginToken loginToken = tokenIssuer.createLoginToken(memberId);
+        tokenValidator.saveValidRefreshToken(memberId, loginToken.refreshToken());
 
-        String accessToken = tokenIssuer.createAccessToken(memberId);
-        String refreshToken = tokenIssuer.createRefreshToken(memberId);
-        tokenValidator.saveValidRefreshToken(memberId, refreshToken, tokenIssuer.getRefreshTokenExpiration());
-
-        return new LoginToken(accessToken, refreshToken);
+        return loginToken;
     }
 
     public void invalidateRefreshToken(long memberId, String refreshToken) {
-        tokenValidator.validateRefreshToken(memberId, refreshToken);
-        tokenValidator.invalidatePreviousRefreshToken(memberId);
+        tokenValidator.invalidatePreviousRefreshToken(memberId, refreshToken);
     }
 }

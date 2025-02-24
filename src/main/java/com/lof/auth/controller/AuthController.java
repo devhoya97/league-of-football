@@ -40,12 +40,6 @@ public class AuthController {
         return new LoginResponse(token);
     }
 
-    /**
-     * refreshToken으로부터 memberId를 파싱하는 경우는 이 때 밖에 없어서, 굳이 필터나 인터셉터로 빼지 않아도 될 것 같다.
-     * 다른 API 구현할 때도, memberId나 Member 객체가 필요하다면 필터, 인터셉터보단 argumentResolver를 활용하는게 낫지 않을까?
-     * HttpServletRequest.setAttribute()로 값을 넣어주는 것보다 argumentResolver를 사용하는게 더 직관적인 것 같음.
-     * 필터, 인터셉터는 딱 로깅이랑 어드민이 맞는 것 같음
-     */
     @PostMapping("/login-refresh")
     public LoginResponse loginRefresh(@RequestAttribute long memberId,
                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {

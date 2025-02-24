@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.lof.auth.implement.dto.LoginToken;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -25,12 +27,11 @@ public class TokenIssuer {
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
-    public String createAccessToken(long memberId) {
-        return createToken(memberId, accessTokenExpiration);
-    }
+    public LoginToken createLoginToken(long memberId) {
+        String accessToken = createToken(memberId, accessTokenExpiration);
+        String refreshToken = createToken(memberId, refreshTokenExpiration);
 
-    public String createRefreshToken(long memberId) {
-        return createToken(memberId, refreshTokenExpiration);
+        return new LoginToken(accessToken, refreshToken);
     }
 
     private String createToken(long memberId, long expiration) {
@@ -40,9 +41,5 @@ public class TokenIssuer {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
-    }
-
-    public long getRefreshTokenExpiration() {
-        return refreshTokenExpiration;
     }
 }
