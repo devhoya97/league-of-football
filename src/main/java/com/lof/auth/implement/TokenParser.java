@@ -1,10 +1,11 @@
 package com.lof.auth.implement;
 
-import java.util.Date;
+import static com.lof.auth.implement.TokenIssuer.TOKEN_TYPE_CLAIM;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.lof.auth.domain.TokenType;
 import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
 
@@ -19,8 +20,6 @@ import io.jsonwebtoken.security.SignatureException;
 @Component
 public class TokenParser {
 
-    private static final long MILLIS_TO_SECONDS = 1000L;
-
     private final String secret;
 
     public TokenParser(@Value("${jwt.secret}") String secret) {
@@ -33,14 +32,10 @@ public class TokenParser {
         return Long.parseLong(claims.getSubject());
     }
 
-    public int parseExpirationSeconds(String token) {
+    public TokenType parseTokenType(String token) {
         Claims claims = parseClaims(token);
-        Date expiration = claims.getExpiration();
 
-        long now = System.currentTimeMillis();
-        long expirationMillis = expiration.getTime() - now;
-
-        return (int) (expirationMillis / MILLIS_TO_SECONDS);
+        return TokenType.valueOf((String) claims.get(TOKEN_TYPE_CLAIM));
     }
 
     private Claims parseClaims(String token) {

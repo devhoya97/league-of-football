@@ -14,11 +14,12 @@ public enum ErrorCode {
     // 회원가입
     DUPLICATED_USERNAME("이미 존재하는 회원 이름입니다.", HttpStatus.BAD_REQUEST),
 
-    // 로그인
+    // 로그인, 토큰
     INVALID_LOGIN("회원 이름 또는 비밀번호를 다시 확인해주세요.", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED),
     EXPIRED_TOKEN("만료된 토큰입니다.", HttpStatus.UNAUTHORIZED),
     MISSING_TOKEN("요청에 토큰을 포함해주세요.", HttpStatus.UNAUTHORIZED),
+    ACCESS_TOKEN_REQUIRED("요청에 accessToken을 포함해주세요.", HttpStatus.UNAUTHORIZED),
 
     // 대기열
     ALREADY_WAITING("이미 대기열에 참가 중입니다.", HttpStatus.BAD_REQUEST),

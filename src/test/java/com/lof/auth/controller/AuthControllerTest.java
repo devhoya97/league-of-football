@@ -90,10 +90,8 @@ class AuthControllerTest extends ControllerTest {
     @DisplayName("refreshToken으로 accessToken과 refreshToken을 갱신한다.")
     void loginRefresh() throws Exception {
         // given
-        when(authService.reissueLoginToken(1L, "refreshToken"))
+        when(authService.reissueLoginToken("refreshToken"))
                 .thenReturn(new LoginToken("accessToken", "newRefreshToken"));
-        when(tokenParser.parseMemberId("refreshToken"))
-                .thenReturn(1L);
 
         // when & then
         mockMvc.perform(post("/login-refresh")
@@ -108,11 +106,6 @@ class AuthControllerTest extends ControllerTest {
     @Test
     @DisplayName("로그아웃 시에는 refreshToken을 요청에 포함해야 한다.")
     void logout() throws Exception {
-        // given
-        when(tokenParser.parseMemberId("refreshToken"))
-                .thenReturn(1L);
-
-        // when & then
         mockMvc.perform(post("/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, "refreshToken"))

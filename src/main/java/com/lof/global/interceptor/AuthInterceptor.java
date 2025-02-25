@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.lof.auth.domain.TokenType;
 import com.lof.auth.implement.TokenParser;
 import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
@@ -19,13 +20,25 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String refreshToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (refreshToken == null) {
-            throw new BizException(ErrorCode.MISSING_TOKEN);
-        }
-        long memberId = tokenParser.parseMemberId(refreshToken);
+        String accessToken = getAccessToken(request);
+        validateIsAccessToken(accessToken);
+        long memberId = tokenParser.parseMemberId(accessToken);
         request.setAttribute("memberId", memberId);
 
         return true;
+    }
+
+    private String getAccessToken(HttpServletRequest request) {
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (accessToken == null) {
+            throw new BizException(ErrorCode.MISSING_TOKEN);
+        }
+        return accessToken;
+    }
+
+    private void validateIsAccessToken(String accessToken) {
+        if (tokenParser.parseTokenType(accessToken) != TokenType.ACCESS) {
+            throw new BizException(ErrorCode.ACCESS_TOKEN_REQUIRED);
+        }
     }
 }
