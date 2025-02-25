@@ -40,6 +40,12 @@ public class AuthController {
         return new LoginResponse(token);
     }
 
+    /*
+    TODO
+        1. refreshToken은 Authorization 헤더로 받지 않고 refresh라는 커스텀 헤더로 받는 것 같은데 더 알아보기
+        2. bearer를 지금 안 붙이고 사용중인 것 같은데 수정하기
+        3. 인가 요청시 accessToken이 아닌 refreshToken을 사용하는 경우, 인가에 실패하도록 구현하기
+     */
     @PostMapping("/login-refresh")
     public LoginResponse loginRefresh(@RequestAttribute long memberId,
                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {

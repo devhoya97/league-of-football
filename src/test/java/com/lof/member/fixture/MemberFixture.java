@@ -16,6 +16,13 @@ public class MemberFixture {
         return new Member(username, password);
     }
 
+    public static Member createMember(String username, int rankScoreIncrement) {
+        Member member = new Member(username, VALID_PASSWORD);
+        member.increaseRankScore(rankScoreIncrement);
+
+        return member;
+    }
+
     public static String createSignUpRequestString(String username, String password) {
         return String.format("""
                 {

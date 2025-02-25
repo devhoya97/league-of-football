@@ -10,22 +10,24 @@ import com.lof.auth.implement.TokenParser;
 import com.lof.auth.service.AuthService;
 import com.lof.member.controller.MemberController;
 import com.lof.member.service.MemberService;
+import com.lof.waitingqueue.controller.WaitingQueueController;
+import com.lof.waitingqueue.service.WaitingQueueService;
 
 @WebMvcTest({
         AuthController.class,
-        MemberController.class
+        MemberController.class,
+        WaitingQueueController.class
 })
 public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
-
-    @MockitoBean
-    protected AuthService authService;
-
-    @MockitoBean
-    protected MemberService memberService;
-
     @MockitoBean
     protected TokenParser tokenParser;
+    @MockitoBean
+    protected AuthService authService;
+    @MockitoBean
+    protected MemberService memberService;
+    @MockitoBean
+    protected WaitingQueueService queueService;
 }

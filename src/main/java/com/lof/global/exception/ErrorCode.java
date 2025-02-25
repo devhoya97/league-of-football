@@ -8,12 +8,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    /*
-    int 값을 넘겨줄까 고민해봤는데, 토스페이먼츠 API를 보니까 에러코드를 String으로 약속하고
-    클라이언트 측에서 String을 약속된대로 파싱하는게 가독성이 좋지 않을까 생각했음
-    https://docs.tosspayments.com/reference/error-codes#%EA%B2%B0%EC%A0%9C-%EC%8A%B9%EC%9D%B8
-     */
-
     // DTO의 @Valid에서 예외 발생한 경우 기본 메시지
     INVALID_USER_INPUT("유효하지 사용자 입력입니다.", HttpStatus.BAD_REQUEST),
 
@@ -25,6 +19,11 @@ public enum ErrorCode {
     INVALID_TOKEN("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED),
     EXPIRED_TOKEN("만료된 토큰입니다.", HttpStatus.UNAUTHORIZED),
     MISSING_TOKEN("요청에 토큰을 포함해주세요.", HttpStatus.UNAUTHORIZED),
+
+    // 대기열
+    ALREADY_WAITING("이미 대기열에 참가 중입니다.", HttpStatus.BAD_REQUEST),
+    NOT_IN_WAITING("대기열에 참가 중이 아닙니다.", HttpStatus.BAD_REQUEST),
+    ALREADY_COMPLETED_WAITING_QUEUE("이미 매칭이 완료된 대기열입니다.", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
     private final String message;
