@@ -24,7 +24,7 @@ public enum ErrorCode {
     // 대기열
     ALREADY_WAITING("이미 대기열에 참가 중입니다.", HttpStatus.BAD_REQUEST),
     NOT_IN_WAITING("대기열에 참가 중이 아닙니다.", HttpStatus.BAD_REQUEST),
-    ALREADY_COMPLETED_WAITING_QUEUE("이미 매칭이 완료된 대기열입니다.", HttpStatus.INTERNAL_SERVER_ERROR)
+    INVALID_WAITING_QUEUE("이미 매칭이 완료됐거나 취소된 대기열입니다.", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
     private final String message;

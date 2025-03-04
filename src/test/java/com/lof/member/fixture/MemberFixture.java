@@ -5,7 +5,7 @@ import com.lof.member.domain.Member;
 
 public class MemberFixture {
 
-    public static final String VALID_LOGIN_ID = "user1";
+    public static final String USERNAME = "user1";
     public static final String VALID_PASSWORD = "Password1!";
 
     private MemberFixture() {

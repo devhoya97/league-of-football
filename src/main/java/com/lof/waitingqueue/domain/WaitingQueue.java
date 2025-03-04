@@ -14,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import com.lof.global.BaseEntity;
 import com.lof.global.exception.ErrorCode;
 import com.lof.global.exception.ServerLoginException;
-import com.lof.member.domain.Member;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -34,27 +33,36 @@ public class WaitingQueue extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "queue")
-    private List<Member> members = new ArrayList<>();
+    @OneToMany(mappedBy = "waitingQueue")
+    private List<WaitingQueueMember> waitingQueueMembers = new ArrayList<>(); // WaitingQueueMemberStatus == 'LEAVE'인 애들은 여기 포함 안시키고 싶은데... JPA가 그건 못하지 않나?
 
     @Enumerated(EnumType.STRING)
     private WaitingQueueStatus status = WaitingQueueStatus.MATCHING;
 
-    public void addMember(Member member) {
-        validateStatus();
-        member.joinInWaitingQueue(this);
-        members.add(member);
+    public void addWaitingQueueMember(WaitingQueueMember queueMember) {
+//        validateQueueSize();
 
-        if (members.size() == MAX_SIZE) {
-            status = WaitingQueueStatus.COMPLETED;
+        waitingQueueMembers.add(queueMember);
+        if (filterWaitingMembers().size() >= MAX_SIZE) {
+            this.status = WaitingQueueStatus.COMPLETED;
         }
     }
 
-    // 1. 이런 상황도 Validator에서 검증을 수행해야할까??
-    // 2. 애초에 repository에서 들고올 때 MATCHING 상태인 애들만 들고오긴 하는데, 여기서 또 검증할 필요가 있을까? 객체지향 관점에서 보면 있는 것 같은데 괜히 오바하는 것 같기도 해서
-    private void validateStatus() {
-        if (status == WaitingQueueStatus.COMPLETED) {
-            throw new ServerLoginException(ErrorCode.ALREADY_COMPLETED_WAITING_QUEUE);
-        }
+    public void completeMatching() {
+        status = WaitingQueueStatus.COMPLETED;
+    }
+
+    public void cancelMatching() {
+        status = WaitingQueueStatus.CANCELED;
+    }
+
+    public boolean hasOnlyOneWaitingMember() {
+        return filterWaitingMembers().size() == 1;
+    }
+
+    private List<WaitingQueueMember> filterWaitingMembers() {
+        return waitingQueueMembers.stream()
+                .filter(wqm -> wqm.getWaitingQueueMemberStatus() == WaitingQueueMemberStatus.WAITING)
+                .toList();
     }
 }

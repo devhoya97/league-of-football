@@ -22,4 +22,9 @@ public class WaitingQueueController {
         long waitingQueueId = waitingQueueService.join(memberId);
         return new JoinResponse(waitingQueueId);
     }
+
+    @PostMapping("/leave")
+    public void leave(@RequestAttribute long memberId) {
+        waitingQueueService.leave(memberId);
+    }
 }

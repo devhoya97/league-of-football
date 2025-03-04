@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lof.member.domain.Member;
 import com.lof.member.implement.MemberDao;
 import com.lof.waitingqueue.domain.WaitingQueue;
-import com.lof.waitingqueue.implement.WaitingQueueSelector;
+import com.lof.waitingqueue.implement.WaitingQueueManager;
 import com.lof.waitingqueue.implement.WaitingQueueValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -16,17 +16,22 @@ import lombok.RequiredArgsConstructor;
 public class WaitingQueueService {
 
     private final MemberDao memberDao;
-    private final WaitingQueueValidator queueValidator;
-    private final WaitingQueueSelector queueSelector;
+    private final WaitingQueueManager waitingQueueManager; // TODO: 클래스 분리 고려
+    private final WaitingQueueValidator waitingQueueValidator;
 
-    @Transactional // waitingQueue의 status를 COMPLETED로 바꾸는 작업과 member 테이블의 queue_id 값을 바꾸는 작업은 원자성을 가져야 하므로
+    @Transactional
     public long join(long memberId) {
-        //TODO: member 가져오는 로직은 이제 너무 중복될 예정이니까, ArgumentResolver로 빼자.
+        waitingQueueValidator.validateNotInMatchingQueue(memberId);
         Member member = memberDao.getMemberById(memberId);
-        queueValidator.validateMember(member);
-        WaitingQueue queue = queueSelector.selectQueue(member.getRankScore());
-        queue.addMember(member);
+        WaitingQueue waitingQueue = waitingQueueManager.selectQueue(member.getRankScore());
+        waitingQueueManager.addMember(member, waitingQueue);
 
-        return queue.getId();
+        return waitingQueue.getId();
+    }
+
+    @Transactional
+    public void leave(long memberId) {
+        waitingQueueValidator.validateInMatchingQueue(memberId);
+        waitingQueueManager.leaveMatchingQueue(memberId);
     }
 }

@@ -34,4 +34,19 @@ class WaitingQueueControllerTest extends ControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("queueId", is(1)));
     }
+
+    @Test
+    @DisplayName("대기열 퇴장에 성공하면 200 상태코드를 반환받는다.")
+    void leaveWaitingQueue() throws Exception {
+        // given
+        String accessToken = "accessToken";
+        when(tokenParser.parseMemberId(accessToken)).thenReturn(1L);
+        when(tokenParser.parseTokenType(accessToken)).thenReturn(TokenType.ACCESS);
+
+        // when & then
+        mockMvc.perform(post("/queue/leave")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                .andExpect(status().isOk());
+    }
 }

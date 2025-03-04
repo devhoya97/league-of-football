@@ -25,7 +25,7 @@ class AuthControllerTest extends ControllerTest {
     @DisplayName("명세에 맞게 회원 가입 API를 호출하면, 201 응답코드를 반환한다.")
     void signUp() throws Exception {
         // given
-        String signUpRequest = MemberFixture.createSignUpRequestString(MemberFixture.VALID_LOGIN_ID, MemberFixture.VALID_PASSWORD);
+        String signUpRequest = MemberFixture.createSignUpRequestString(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD);
 
         // when & then
         mockMvc.perform(post("/signup")
@@ -56,7 +56,7 @@ class AuthControllerTest extends ControllerTest {
     @ValueSource(strings = {"12345678", "a1234567", "Aa123456", "Aa1234!", "A123456789a123456789!"})
     void signUpFailByPassword(String password) throws Exception {
         // given
-        String signUpRequest = MemberFixture.createSignUpRequestString(MemberFixture.VALID_LOGIN_ID, password);
+        String signUpRequest = MemberFixture.createSignUpRequestString(MemberFixture.USERNAME, password);
 
         // when & then
         mockMvc.perform(post("/signup")
@@ -72,8 +72,8 @@ class AuthControllerTest extends ControllerTest {
     @DisplayName("회원이름과 비밀번호로 로그인을 하면 토큰이 발급된다.")
     void login() throws Exception {
         // given
-        String loginRequest = MemberFixture.createLoginRequestString(MemberFixture.VALID_LOGIN_ID, MemberFixture.VALID_PASSWORD);
-        when(authService.issueLoginToken(MemberFixture.VALID_LOGIN_ID, MemberFixture.VALID_PASSWORD))
+        String loginRequest = MemberFixture.createLoginRequestString(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD);
+        when(authService.issueLoginToken(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD))
                 .thenReturn(new LoginToken("accessToken", "refreshToken"));
 
         // when & then
