@@ -8,7 +8,7 @@ import com.lof.auth.implement.TokenParser;
 import com.lof.auth.implement.TokenValidator;
 import com.lof.auth.implement.dto.LoginToken;
 import com.lof.member.domain.Member;
-import com.lof.member.implement.MemberDao;
+import com.lof.member.implement.MemberManager;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final MemberDao memberDao;
+    private final MemberManager memberManager;
     private final AuthRequestValidator requestValidator;
     private final TokenValidator tokenValidator;
     private final TokenIssuer tokenIssuer;
@@ -24,11 +24,11 @@ public class AuthService {
 
     public void signUp(Member member) {
         requestValidator.validateDuplicatedUsername(member.getUsername());
-        memberDao.save(member);
+        memberManager.save(member);
     }
 
     public LoginToken issueLoginToken(String username, String password) {
-        Member member = memberDao.getMemberByUsername(username);
+        Member member = memberManager.getMemberByUsername(username);
         requestValidator.validatePassword(member.getPassword(), password);
 
         return createLoginToken(member.getId());

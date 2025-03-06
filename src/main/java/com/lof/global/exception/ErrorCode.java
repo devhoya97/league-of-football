@@ -10,9 +10,12 @@ import lombok.Getter;
 public enum ErrorCode {
     // DTO의 @Valid에서 예외 발생한 경우 기본 메시지
     INVALID_USER_INPUT("유효하지 사용자 입력입니다.", HttpStatus.BAD_REQUEST),
+    // 요청 관련
+    INVALID_REQUEST_BODY("요청 본문이 형식에 맞지 않아 읽을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
-    // 회원가입
+    // 회원
     DUPLICATED_USERNAME("이미 존재하는 회원 이름입니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_MEMBER("존재하지 않는 회원입니다.", HttpStatus.BAD_REQUEST),
 
     // 로그인, 토큰
     INVALID_LOGIN("회원 이름 또는 비밀번호를 다시 확인해주세요.", HttpStatus.UNAUTHORIZED),
@@ -22,9 +25,15 @@ public enum ErrorCode {
     ACCESS_TOKEN_REQUIRED("요청에 accessToken을 포함해주세요.", HttpStatus.UNAUTHORIZED),
 
     // 대기열
+    NOT_EXIST_WAITING_QUEUE("대기열이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     ALREADY_WAITING("이미 대기열에 참가 중입니다.", HttpStatus.BAD_REQUEST),
     NOT_IN_WAITING("대기열에 참가 중이 아닙니다.", HttpStatus.BAD_REQUEST),
-    INVALID_WAITING_QUEUE("이미 매칭이 완료됐거나 취소된 대기열입니다.", HttpStatus.INTERNAL_SERVER_ERROR)
+    INVALID_WAITING_QUEUE("이미 매칭이 완료됐거나 취소된 대기열입니다.", HttpStatus.BAD_REQUEST),
+
+    FULL_WAITING_QUEUE_INTERNAL_SERVER_ERROR("대기열이 가득차 회원이 추가로 참여할 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR), //TODO: 대기열id도 찍어주면 좋을 것 같다.
+
+    // 게임
+    NOT_FOUND_GAME_INTERNAL_SERVER_ERROR("게임을 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     private final String message;

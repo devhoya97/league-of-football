@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import com.lof.game.domain.TeamColor;
 import com.lof.global.BaseEntity;
 import com.lof.member.domain.Member;
 
@@ -37,7 +38,10 @@ public class WaitingQueueMember extends BaseEntity {
     private WaitingQueue waitingQueue;
 
     @Enumerated(EnumType.STRING)
-    private WaitingQueueMemberStatus waitingQueueMemberStatus = WaitingQueueMemberStatus.WAITING;
+    private WaitingQueueMemberStatus status = WaitingQueueMemberStatus.JOINED;
+
+    @Enumerated(EnumType.STRING)
+    private TeamColor teamColor = TeamColor.NOT_DETERMINED;
 
     public WaitingQueueMember(Member member, WaitingQueue waitingQueue) {
         this.member = member;
@@ -45,6 +49,18 @@ public class WaitingQueueMember extends BaseEntity {
     }
 
     public void leaveWaitingQueue() {
-        waitingQueueMemberStatus = WaitingQueueMemberStatus.LEAVE;
+        status = WaitingQueueMemberStatus.LEFT;
+    }
+
+    public void belongToRedTeam() {
+        teamColor = TeamColor.RED;
+    }
+
+    public void belongToBlueTeam() {
+        teamColor = TeamColor.BLUE;
+    }
+
+    public boolean isJoined() {
+        return status == WaitingQueueMemberStatus.JOINED;
     }
 }

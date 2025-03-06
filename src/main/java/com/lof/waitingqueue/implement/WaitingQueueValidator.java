@@ -1,9 +1,12 @@
 package com.lof.waitingqueue.implement;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
 import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
+import com.lof.waitingqueue.repository.WaitingQueueMemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,26 +14,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WaitingQueueValidator {
 
-    private final WaitingQueueManager queueDao;
+    private final WaitingQueueMemberRepository waitingQueueMemberRepository;
 
-    public void validateNotInMatchingQueue(long memberId) {
-        if (queueDao.isInMatchingQueue(memberId)) {
+    public void validateNotInMatchingQueue(long memberId, LocalDate gameDate) {
+        if (waitingQueueMemberRepository.isJoinedInMatchingQueue(memberId, gameDate)) {
             throw new BizException(ErrorCode.ALREADY_WAITING);
         }
     }
-
-    public void validateInMatchingQueue(long memberId) {
-        if (!queueDao.isInMatchingQueue(memberId)) {
-            throw new BizException(ErrorCode.NOT_IN_WAITING);
-        }
-    }
-
-//    public void validateMember(Member member) {
-//        // getter로 직접 꺼내서 비교하는게 낫나?
-//        if (member.isAlreadyInWaitingQueue()) {
-//            throw new BizException(ErrorCode.ALREADY_WAITING);
-//        }
-//    }
-
-//    public void
 }

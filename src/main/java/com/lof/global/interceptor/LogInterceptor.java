@@ -34,9 +34,13 @@ public class LogInterceptor implements HandlerInterceptor {
         long startTime = (long) request.getAttribute("startTime");
 
         // GlobalExceptionHandler가 넘겨준 예외를 여기서 처리
-        BizException e = (BizException) request.getAttribute("error");
-        if (e != null) {
-            log.error("requestId: {}, responseStatus: {}, memberId: {}, duration: {}, code: {}", requestId, response.getStatus(), memberId, System.currentTimeMillis() - startTime, e.getCode(), e);
+        Exception exception = (Exception) request.getAttribute("error");
+        if (exception instanceof BizException bizException) {
+            log.warn("requestId: {}, responseStatus: {}, memberId: {}, duration: {}, code: {}", requestId, response.getStatus(), memberId, System.currentTimeMillis() - startTime, bizException.getCode(), exception);
+            return;
+        }
+        if (exception != null) {
+            log.error("requestId: {}, responseStatus: {}, memberId: {}, duration: {}", requestId, response.getStatus(), memberId, System.currentTimeMillis() - startTime, exception);
             return;
         }
 

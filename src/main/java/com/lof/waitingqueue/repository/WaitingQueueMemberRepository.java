@@ -1,5 +1,7 @@
 package com.lof.waitingqueue.repository;
 
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,14 +13,11 @@ import com.lof.waitingqueue.domain.WaitingQueueMember;
 public interface WaitingQueueMemberRepository extends JpaRepository<WaitingQueueMember, Long> {
 
     @Query("""
-            SELECT wqm FROM WaitingQueueMember wqm
-            WHERE wqm.member.id = :memberId AND wqm.waitingQueueMemberStatus = 'WAITING'
-            """)
-    WaitingQueueMember findWaitingMember(@Param("memberId") long memberId);
-
-    @Query("""
             SELECT COUNT(wqm) > 0 FROM WaitingQueueMember wqm
-            JOIN wqm.waitingQueue wq ON wq.status = 'MATCHING' AND wqm.waitingQueueMemberStatus = 'WAITING' AND wqm.member.id = :memberId
+            JOIN wqm.waitingQueue wq ON wq.status = 'MATCHING'
+                AND wq.gameDate = :gameDate
+                AND wqm.status = 'JOINED'
+                AND wqm.member.id = :memberId
             """)
-    boolean isInMatchingQueue(@Param("memberId") long memberId);
+    boolean isJoinedInMatchingQueue(@Param("memberId") long memberId, @Param("gameDate")LocalDate gameDate);
 }

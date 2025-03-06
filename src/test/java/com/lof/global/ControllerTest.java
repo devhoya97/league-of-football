@@ -29,5 +29,5 @@ public abstract class ControllerTest {
     @MockitoBean
     protected MemberService memberService;
     @MockitoBean
-    protected WaitingQueueService queueService;
+    protected WaitingQueueService waitingQueueService;
 }

@@ -2,6 +2,8 @@ package com.lof.waitingqueue.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +35,13 @@ class WaitingQueueMemberRepositoryTest {
         // given
         Member member = MemberFixture.createMember(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD);
         memberRepository.save(member);
-        WaitingQueue queue = new WaitingQueue();
+        LocalDate gameDate = LocalDate.now();
+        WaitingQueue queue = new WaitingQueue(gameDate);
         queueRepository.save(queue);
         queueMemberRepository.save(new WaitingQueueMember(member, queue));
 
         // when
-        boolean result = queueMemberRepository.isInMatchingQueue(member.getId());
+        boolean result = queueMemberRepository.isJoinedInMatchingQueue(member.getId(), gameDate);
 
         // then
         assertThat(result).isTrue();
@@ -50,33 +53,34 @@ class WaitingQueueMemberRepositoryTest {
         // given
         Member member = MemberFixture.createMember(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD);
         memberRepository.save(member);
-        WaitingQueue queue = new WaitingQueue();
+        LocalDate gameDate = LocalDate.now();
+        WaitingQueue queue = new WaitingQueue(gameDate);
         queue.completeMatching();
         queueRepository.save(queue);
         queueMemberRepository.save(new WaitingQueueMember(member, queue));
 
         // when
-        boolean result = queueMemberRepository.isInMatchingQueue(member.getId());
+        boolean result = queueMemberRepository.isJoinedInMatchingQueue(member.getId(), gameDate);
 
         // then
         assertThat(result).isFalse();
     }
 
     @Test
-    @DisplayName("아직 매칭 중인 대기열에서 대기 중인 회원을 찾아온다.")
-    void findWaitingMember() {
+    @DisplayName("회원이 특정 날짜에 아직 매칭 중인 대기열에 참여하고 있지 않으면 false를 반환한다.")
+    void isInMatchingQueueFalseByDate() {
         // given
         Member member = MemberFixture.createMember(MemberFixture.USERNAME, MemberFixture.VALID_PASSWORD);
         memberRepository.save(member);
-        WaitingQueue queue = new WaitingQueue();
+        LocalDate gameDate = LocalDate.now();
+        WaitingQueue queue = new WaitingQueue(gameDate);
         queueRepository.save(queue);
-        WaitingQueueMember queueMember = new WaitingQueueMember(member, queue);
-        queueMemberRepository.save(queueMember);
+        queueMemberRepository.save(new WaitingQueueMember(member, queue));
 
         // when
-        WaitingQueueMember result = queueMemberRepository.findWaitingMember(member.getId());
+        boolean result = queueMemberRepository.isJoinedInMatchingQueue(member.getId(), gameDate.minusDays(1));
 
         // then
-        assertThat(result).isEqualTo(queueMember);
+        assertThat(result).isFalse();
     }
 }
