@@ -29,10 +29,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@Valid @RequestBody SignUpRequest request) {
+    public SignUpResponse signUp(@Valid @RequestBody SignUpRequest request) {
         Member member = new Member(request.username(), request.password());
 
-        authService.signUp(member);
+        return new SignUpResponse(authService.signUp(member));
     }
 
     @PostMapping("/login")

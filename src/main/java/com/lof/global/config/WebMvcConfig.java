@@ -24,6 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new AuthInterceptor(tokenParser))
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/login", "/signup", "/login-refresh", "/logout");
+                .excludePathPatterns("/", "/login", "/signup", "/login-refresh", "/logout", "/members/**/rank");
     }
 }

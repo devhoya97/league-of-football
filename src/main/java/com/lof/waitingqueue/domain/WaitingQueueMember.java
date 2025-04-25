@@ -41,7 +41,7 @@ public class WaitingQueueMember extends BaseEntity {
     private WaitingQueueMemberStatus status = WaitingQueueMemberStatus.JOINED;
 
     @Enumerated(EnumType.STRING)
-    private TeamColor teamColor = TeamColor.NOT_DETERMINED;
+    private TeamColor teamColor = TeamColor.BLUE;
 
     public WaitingQueueMember(Member member, WaitingQueue waitingQueue) {
         this.member = member;

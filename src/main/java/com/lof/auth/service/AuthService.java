@@ -22,9 +22,9 @@ public class AuthService {
     private final TokenIssuer tokenIssuer;
     private final TokenParser tokenParser;
 
-    public void signUp(Member member) {
+    public long signUp(Member member) {
         requestValidator.validateDuplicatedUsername(member.getUsername());
-        memberManager.save(member);
+        return memberManager.save(member);
     }
 
     public LoginToken issueLoginToken(String username, String password) {

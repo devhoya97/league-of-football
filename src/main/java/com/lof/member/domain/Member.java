@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
-    public void increaseRankScore(int amount) {
+    public void changeRankScore(int amount) {
         rankScore += amount;
     }
 }

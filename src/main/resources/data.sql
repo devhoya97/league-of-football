@@ -1,7 +1,3 @@
-insert into waiting_queue(status, created_at, updated_at) values('MATCHING', '2025-02-25', '2025-02-25');
-insert into waiting_queue(status, created_at, updated_at) values('MATCHING', '2025-02-25', '2025-02-25');
-insert into waiting_queue(status, created_at, updated_at) values('MATCHING', '2025-02-25', '2025-02-25');
-
 insert into member(username, password, rank_score, queue_id, created_at, updated_at) values("user1", "Testpassword1!", 1000, 1, '2025-02-24', '2025-02-25');
 insert into member(username, password, rank_score, queue_id, created_at, updated_at) values("user2", "Testpassword1!", 1000, 1, '2025-02-24', '2025-02-25');
 insert into member(username, password, rank_score, queue_id, created_at, updated_at) values("user3", "Testpassword1!", 1000, 1, '2025-02-24', '2025-02-25');

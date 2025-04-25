@@ -18,7 +18,7 @@ public class MemberFixture {
 
     public static Member createMember(String username, int rankScoreIncrement) {
         Member member = new Member(username, VALID_PASSWORD);
-        member.increaseRankScore(rankScoreIncrement);
+        member.changeRankScore(rankScoreIncrement);
 
         return member;
     }

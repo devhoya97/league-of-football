@@ -1,43 +1,29 @@
 package com.lof.waitingqueue.implement;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
+import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
+import com.lof.common.District;
 import com.lof.global.exception.BizException;
 import com.lof.global.exception.ErrorCode;
-import com.lof.waitingqueue.domain.WaitingQueue;
-import com.lof.waitingqueue.repository.WaitingQueueRepository;
+import com.lof.member.domain.Member;
+import com.lof.member.domain.RankTier;
+import com.lof.waitingqueue.repository.WaitingQueueRedisRepository;
+import com.lof.waitingqueue.service.WaitingQueueStatus;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class WaitingQueueManager {
-
-    private static final int SCORE_SELECT_BOUND = 50;
-
-    private final WaitingQueueRepository waitingQueueRepository;
-
-    public WaitingQueue readById(long queueId) {
-        return waitingQueueRepository.findById(queueId)
-                .orElseThrow(() -> new BizException(ErrorCode.NOT_EXIST_WAITING_QUEUE));
-    }
-
-    public WaitingQueue selectQueue(int rankScore, LocalDate gameDate) {
-        List<WaitingQueue> selectResult = waitingQueueRepository.findWaitingQueueAvgScoreInRangeOrderByCreatedAt(
-                rankScore - SCORE_SELECT_BOUND,
-                rankScore + SCORE_SELECT_BOUND,
-                gameDate,
-                PageRequest.of(0, 1));
-
-        if (!selectResult.isEmpty()) {
-            return selectResult.get(0);
-        }
-        WaitingQueue waitingQueue = new WaitingQueue(gameDate);
-        waitingQueueRepository.save(waitingQueue);
-        return waitingQueue;
-    }
 }

@@ -42,7 +42,7 @@ public class WaitingQueue extends BaseEntity {
     private List<WaitingQueueMember> waitingQueueMembers = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private WaitingQueueStatus status = WaitingQueueStatus.MATCHING;
+    private MatchingStatus status = MatchingStatus.MATCHED;
 
     private LocalDate gameDate;
 
@@ -55,13 +55,13 @@ public class WaitingQueue extends BaseEntity {
         List<WaitingQueueMember> joinedWaitingQueueMember = filterJoinedMembers();
         validateSize(joinedWaitingQueueMember.size());
         if (joinedWaitingQueueMember.size() + 1 == MAX_JOINED_WAITING_QUEUE_MEMBER_COUNT) {
-            status = WaitingQueueStatus.COMPLETED;
+            status = MatchingStatus.WAITING;
         }
         waitingQueueMembers.add(new WaitingQueueMember(member, this));
     }
 
     private void validateInMatching() {
-        if (status != WaitingQueueStatus.MATCHING) {
+        if (status != MatchingStatus.MATCHED) {
             throw new BizException(ErrorCode.INVALID_WAITING_QUEUE);
         }
     }
@@ -86,19 +86,16 @@ public class WaitingQueue extends BaseEntity {
     }
 
     public void completeMatching() {
-        status = WaitingQueueStatus.COMPLETED;
+        status = MatchingStatus.WAITING;
     }
 
-    public void cancelMatching() {
-        status = WaitingQueueStatus.CANCELED;
-    }
 
     public boolean isCompleted() {
-        return status == WaitingQueueStatus.COMPLETED;
+        return status == MatchingStatus.WAITING;
     }
 
     public boolean isMatching() {
-        return status == WaitingQueueStatus.MATCHING;
+        return status == MatchingStatus.MATCHED;
     }
 
     public void leave(long memberId) {
@@ -106,13 +103,6 @@ public class WaitingQueue extends BaseEntity {
         WaitingQueueMember joinedWaitingQueueMember = getJoinedWaitingQueueMember(memberId);
         joinedWaitingQueueMember.leaveWaitingQueue();
         waitingQueueMembers.remove(joinedWaitingQueueMember);
-        cancelWaitingQueueIfEmpty();
-    }
-
-    private void cancelWaitingQueueIfEmpty() {
-        if (filterJoinedMembers().isEmpty()) {
-            status = WaitingQueueStatus.CANCELED;
-        }
     }
 
     private WaitingQueueMember getJoinedWaitingQueueMember(long memberId) {
